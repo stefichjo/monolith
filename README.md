@@ -3,9 +3,8 @@
 * `stack new monolith`
 * `cd monolith`
 
-
 * `vim monolith.cabal`
-```
+``` .cabal
 executable monolith-exe
   main-is: Main.hs
   other-modules:
@@ -17,13 +16,12 @@ executable monolith-exe
       base >=4.7 && <5
     , monolith
     , polysemy
-  default-language: Haskell2010
 ```
 
 * `vim app/Main.hs`
-```
+``` .hs
 import Lib
 import Polysemy
 ```
 
-
+* `stack build --file-watch --fast`
