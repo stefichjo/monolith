@@ -24,6 +24,9 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+    - mtl
+    - polysemy
 
 executables:
   monolith-exe:
