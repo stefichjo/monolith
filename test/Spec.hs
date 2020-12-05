@@ -18,6 +18,9 @@ spec = do
   describe "ok" $ do
     it "should be True" $ do
       ok `shouldBe` True
+  describe "okLibrary" $ do
+    it "should be True" $ do
+      append '!' "Hi" `shouldBe` "Hi!"
 
 ok = and [
   okLog,
@@ -25,7 +28,6 @@ ok = and [
   okConsole,
   okApp,
   okLanguage,
-  okLibrary,
   True]
 
 okLog = and [
@@ -125,12 +127,6 @@ okLanguage = and [
     ==
     "Hello World!",
 
-  True]
-
-okLibrary = and [
-
-    append '!' "Hi" == "Hi!",
-  
   True]
 
 type LogT = Writer String
