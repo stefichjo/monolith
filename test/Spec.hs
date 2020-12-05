@@ -138,13 +138,11 @@ type LogT = Writer String
 instance Log LogT where
 
   logWrite = tell
-
 newtype LogMtl a = LogMtl { runLogMtl :: LogT a }
   deriving (Functor, Applicative, Monad, MonadWriter String)
 instance Log LogMtl where
 
   logWrite msg = LogMtl $ logWrite msg
-
 instance Log AppMtl where
 
   logWrite = tell
@@ -154,14 +152,12 @@ instance DB DBT where
 
   dbCreate user = dbRead >>= put . append user
   dbRead = get
-
 newtype DBMtl a = DBMtl { runDBMtl :: DBT a }
   deriving (Functor, Applicative, Monad, MonadState [User])
 instance DB DBMtl where
 
   dbCreate user = DBMtl $ dbCreate user
   dbRead = DBMtl $ get
-
 instance DB AppMtl where
 
   dbCreate user = dbRead >>= put . append user
@@ -172,16 +168,13 @@ instance Console ConsoleT where
 
   consoleRead = ask
   consoleWrite = tell
-
+instance Console ConsoleMtl where
+  consoleRead = ConsoleMtl $ consoleRead
+  consoleWrite msg = ConsoleMtl $ consoleWrite msg
 newtype ConsoleMtl a =
   ConsoleMtl {
     runConsoleMtl :: ConsoleT a }
   deriving (Functor, Applicative, Monad, MonadReader String, MonadWriter String)
-instance Console ConsoleMtl where
-
-  consoleRead = ConsoleMtl $ consoleRead
-  consoleWrite msg = ConsoleMtl $ consoleWrite msg
-
 instance Console AppMtl where
 
   consoleRead = ask
@@ -210,8 +203,9 @@ Polysemy:
 https://www.youtube.com/watch?v=eth4y015BCU
 
 TODO
-* DIY Member/Effect Interpreter "T"
 * DSL (GADT)
+  * in Spec
+* DIY Member/Effect Interpreter "T"
 * Member, Eff
 * Sem Polysemy Interpreter
 -}
