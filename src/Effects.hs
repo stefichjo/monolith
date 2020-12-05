@@ -32,7 +32,10 @@ import FileSystem
 
 import Polysemy
 
+-- TODO Atom Editor
 -- TODO Member, Eff
+-- TODO DSL (GADT)
+-- TODO test/ (+ stack config)
 
 {-
 withdraw :: (
