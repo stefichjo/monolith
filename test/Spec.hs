@@ -5,7 +5,9 @@ module Main where
 
 import Test.Hspec
 import Test.QuickCheck
+
 import Effects
+import Utils
 
 import Control.Monad.Reader
 import Control.Monad.Writer

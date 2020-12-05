@@ -1,9 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module Effects (
-    module Utils,
-    module Effects
-  ) where
+module Effects where
 
 import FileSystem
 import Utils
