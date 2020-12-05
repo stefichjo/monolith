@@ -68,19 +68,19 @@ data User = User {
 
 data LogDsl m a where
 
-  LogWrite :: String -> LogDsl m ()
+  LogWriteDsl :: String -> LogDsl m ()
 instance Log (LogDsl m) where
 
-  logWrite = LogWrite
+  logWrite = LogWriteDsl
 
 data DbDsl m a where
 
-  DbCreate :: User -> DbDsl m ()
-  DbRead :: DbDsl m [User]
+  DbCreateDsl :: User -> DbDsl m ()
+  DbReadDsl :: DbDsl m [User]
 instance DB (DbDsl m) where
 
-  dbCreate = DbCreate
-  dbRead = DbRead
+  dbCreate = DbCreateDsl
+  dbRead = DbReadDsl
 
 data ConsoleDsl m a where
 
