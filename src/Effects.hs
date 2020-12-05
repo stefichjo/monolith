@@ -27,7 +27,6 @@ app = do
 class Log m where
 
   logWrite :: String -> m ()
-
 instance Log IO where
 
   logWrite = addFile logFileName
@@ -41,7 +40,6 @@ class DB m where
   dbCreateNextUser name = do
     User lastId _ <- maximum <$> dbRead
     dbCreate (User (succ lastId) name)
-
 instance DB IO where
 
   dbCreate = addFile dbFileName
@@ -51,7 +49,6 @@ class Console m where
 
   consoleRead :: m String
   consoleWrite :: String -> m ()
-
 instance Console IO where
 
   consoleRead = getLine
@@ -75,6 +72,7 @@ data LogDsl m a where
 instance Log (LogDsl m) where
 
   logWrite = LogWrite
+
 data DbDsl m a where
 
   DbCreate :: User -> DbDsl m ()
@@ -83,6 +81,7 @@ instance DB (DbDsl m) where
 
   dbCreate = DbCreate
   dbRead = DbRead
+
 data ConsoleDsl m a where
 
   ConsoleRead :: ConsoleDsl m String
