@@ -59,6 +59,9 @@ dbFileName = "db" :: FilePath
 
 type UserId = Int
 type UserName = String
-data User = User { userId :: UserId, userName :: UserName }
+data User = User {
+    userId :: UserId,
+    userName :: UserName
+  }
   deriving (Eq, Ord, Show, Read)
 
