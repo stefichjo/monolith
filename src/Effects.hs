@@ -1,5 +1,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE ConstrainedClassMethods #-}
 
 module Effects where
 
@@ -30,12 +32,12 @@ instance Log IO where
 
   logWrite = addFile logFileName
 
-class Monad m => DB m where
+class DB m where
 
   dbCreate :: User -> m ()
   dbRead :: m [User]
 
-  dbCreateNextUser :: String -> m ()
+  dbCreateNextUser :: Monad m => String -> m ()
   dbCreateNextUser name = do
     User lastId _ <- maximum <$> dbRead
     dbCreate (User (succ lastId) name)
@@ -66,11 +68,26 @@ data User = User {
   }
   deriving (Eq, Ord, Show, Read)
 
+
+data LogDsl m a where
+
+  LogWrite :: String -> LogDsl m ()
+instance Log (LogDsl m) where
+
+  logWrite = LogWrite
+data DbDsl m a where
+
+  DbCreate :: User -> DbDsl m ()
+  DbRead :: DbDsl m [User]
+instance DB (DbDsl m) where
+
+  dbCreate = DbCreate
+  dbRead = DbRead
 data ConsoleDsl m a where
+
   ConsoleRead :: ConsoleDsl m String
   ConsoleWrite :: String -> ConsoleDsl m ()
-
 instance Console (ConsoleDsl m) where
+
   consoleRead = ConsoleRead
   consoleWrite = ConsoleWrite
-
