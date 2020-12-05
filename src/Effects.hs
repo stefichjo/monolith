@@ -32,9 +32,6 @@ import FileSystem
 
 import Polysemy
 
-main :: IO ()
-main = app
-
 -- TODO Member, Eff
 
 {-
