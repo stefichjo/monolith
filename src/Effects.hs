@@ -1,4 +1,5 @@
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE GADTs #-}
 
 module Effects where
 
@@ -64,4 +65,12 @@ data User = User {
     userName :: UserName
   }
   deriving (Eq, Ord, Show, Read)
+
+data ConsoleDsl m a where
+  ConsoleRead :: ConsoleDsl m String
+  ConsoleWrite :: String -> ConsoleDsl m ()
+
+instance Console (ConsoleDsl m) where
+  consoleRead = ConsoleRead
+  consoleWrite = ConsoleWrite
 
