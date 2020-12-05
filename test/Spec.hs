@@ -143,9 +143,6 @@ newtype LogMtl a =
 instance Log LogMtl where
 
   logWrite msg = LogMtl $ logWrite msg
-instance Log AppMtl where
-
-  logWrite = tell
 
 type DBT = State [User]
 instance DB DBT where
@@ -163,10 +160,6 @@ instance DB DBMtl where
 
   dbCreate user = DBMtl $ dbCreate user
   dbRead = DBMtl $ get
-instance DB AppMtl where
-
-  dbCreate user = dbRead >>= put . append user
-  dbRead = get
 
 type ConsoleT = WriterT String (Reader String)
 instance Console ConsoleT where
@@ -184,12 +177,9 @@ instance Console ConsoleMtl where
 
   consoleRead = ConsoleMtl $ consoleRead
   consoleWrite msg = ConsoleMtl $ consoleWrite msg
-instance Console AppMtl where
 
-  consoleRead = ask
-  consoleWrite = tell
-
-type AppT = StateT [User] ConsoleT
+-- TODO use DBT and LogT as well
+type AppT = (StateT [User]) ConsoleT
 newtype AppMtl a =
 
   AppMtl {
@@ -197,6 +187,17 @@ newtype AppMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadReader String, MonadWriter String, MonadState [User])
+instance Log AppMtl where
+
+  logWrite = tell
+instance DB AppMtl where
+
+  dbCreate user = dbRead >>= put . append user
+  dbRead = get
+instance Console AppMtl where
+
+  consoleRead = ask
+  consoleWrite = tell
 
 inMemoryDB = [
     User 42 "Bar",
