@@ -34,7 +34,6 @@ ok = and [
   okApp,
   okLanguage,
   True]
-
 okLog = and [
 
     -- LogT ()
@@ -51,7 +50,6 @@ okLog = and [
 
   runLogT = runWriter
   runLog = runLogT . runLogMtl
-
 okDB = and [
 
   -- DBT ()
@@ -78,7 +76,6 @@ okDB = and [
 
   runDBT = runState
   runDB = runDBT . runDBMtl
-
 okConsole = and [
 
   -- ConsoleT String
@@ -106,7 +103,6 @@ okConsole = and [
   
   runConsoleT = runReader . runWriterT
   runConsole = runConsoleT . runConsoleMtl
-
 okApp = and [
 
     -- AppMtl ()
@@ -119,7 +115,6 @@ okApp = and [
   True] where
 
   runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
-
 okLanguage = and [
 
     -- UserId
@@ -138,8 +133,13 @@ type LogT = Writer String
 instance Log LogT where
 
   logWrite = tell
-newtype LogMtl a = LogMtl { runLogMtl :: LogT a }
-  deriving (Functor, Applicative, Monad, MonadWriter String)
+newtype LogMtl a =
+  
+  LogMtl {
+    runLogMtl :: LogT a }
+  deriving (
+    Functor, Applicative, Monad,
+    MonadWriter String)
 instance Log LogMtl where
 
   logWrite msg = LogMtl $ logWrite msg
@@ -152,8 +152,13 @@ instance DB DBT where
 
   dbCreate user = dbRead >>= put . append user
   dbRead = get
-newtype DBMtl a = DBMtl { runDBMtl :: DBT a }
-  deriving (Functor, Applicative, Monad, MonadState [User])
+newtype DBMtl a =
+  
+  DBMtl {
+    runDBMtl :: DBT a }
+  deriving (
+    Functor, Applicative, Monad,
+    MonadState [User])
 instance DB DBMtl where
 
   dbCreate user = DBMtl $ dbCreate user
@@ -168,13 +173,17 @@ instance Console ConsoleT where
 
   consoleRead = ask
   consoleWrite = tell
-instance Console ConsoleMtl where
-  consoleRead = ConsoleMtl $ consoleRead
-  consoleWrite msg = ConsoleMtl $ consoleWrite msg
 newtype ConsoleMtl a =
+
   ConsoleMtl {
     runConsoleMtl :: ConsoleT a }
-  deriving (Functor, Applicative, Monad, MonadReader String, MonadWriter String)
+  deriving (
+    Functor, Applicative, Monad,
+    MonadReader String, MonadWriter String)
+instance Console ConsoleMtl where
+
+  consoleRead = ConsoleMtl $ consoleRead
+  consoleWrite msg = ConsoleMtl $ consoleWrite msg
 instance Console AppMtl where
 
   consoleRead = ask
@@ -182,9 +191,12 @@ instance Console AppMtl where
 
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
+
   AppMtl {
     runAppMtl :: AppT a }
-  deriving (Functor, Applicative, Monad, MonadReader String, MonadWriter String, MonadState [User])
+  deriving (
+    Functor, Applicative, Monad,
+    MonadReader String, MonadWriter String, MonadState [User])
 
 inMemoryDB = [
     User 42 "Bar",
