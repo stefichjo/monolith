@@ -3,30 +3,17 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE RankNTypes #-}
--- {-# LANGUAGE DeriveFunctor #-}
--- {-# LANGUAGE BangPatterns #-}
-{-
-Tagles Final:
-https://serokell.io/blog/tagless-final
-https://jproyo.github.io/posts/2019-03-17-tagless-final-haskell.html
 
-Free Monads:
-https://www.youtube.com/watch?v=gUPuWHAt6SA&t=57s
-
-Polysemy:
-https://www.youtube.com/watch?v=eth4y015BCU
-
-TODO
-* DIY Member/Effect Interpreter "T"
-* Sem Polysemy Interpreter
--}
-
-module Effects where
+module Effects (
+    module Effects,
+    module Control.Monad.Reader,
+    module Control.Monad.Writer,
+    module Control.Monad.State
+  ) where
 
 import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
--- import Control.Monad.Identity
 
 import FileSystem
 
@@ -35,7 +22,6 @@ import Polysemy
 -- TODO Atom Editor
 -- TODO Member, Eff
 -- TODO DSL (GADT)
--- TODO test/ (+ stack config)
 
 {-
 withdraw :: (
@@ -93,23 +79,6 @@ instance Console IO where
   consoleRead = getLine
   consoleWrite = putStrLn
 
-okLog = and [
-
-    -- LogT ()
-    runLogT (logWrite "Hi!")
-    ==
-    ((), "Hi!"),
-    
-    -- LogMtl ()
-    runLog (logWrite "Hi!")
-    ==
-    ((), "Hi!"),
-    
-  True] where
-
-  runLogT = runWriter
-  runLog = runLogT . runLogMtl
-
 type LogT = Writer String
 instance Log LogT where
 
@@ -124,33 +93,6 @@ instance Log LogMtl where
 instance Log AppMtl where
 
   logWrite = tell
-
-okDB = and [
-
-  -- DBT ()
-  runDBT (dbCreate (last inMemoryDB)) (init inMemoryDB)
-  ==
-  ((), inMemoryDB),
-  
-  -- DBT [User]
-  runDBT dbRead inMemoryDB
-  ==
-  (inMemoryDB, inMemoryDB),
-
-  -- DBMtl ()
-  runDB (dbCreate (last inMemoryDB)) (init inMemoryDB)
-  ==
-  ((), inMemoryDB),
-  
-  -- DBMtl [User]
-  runDB dbRead inMemoryDB
-  ==
-  (inMemoryDB, inMemoryDB),
-
-  True] where
-
-  runDBT = runState
-  runDB = runDBT . runDBMtl
 
 type DBT = State [User]
 instance DB DBT where
@@ -169,34 +111,6 @@ instance DB AppMtl where
 
   dbCreate user = dbRead >>= put . append user
   dbRead = get
-
-okConsole = and [
-
-  -- ConsoleT String
-  runConsoleT (consoleRead) "Hi!"
-  ==
-  ("Hi!", ""),
-  
-  -- ConsoleT ()
-  runConsoleT (consoleWrite "Hi!") ""
-  ==
-  ((), "Hi!"),
-  
-  
-  -- ConsoleMtl String
-  runConsole (consoleRead) "Hi!"
-  ==
-  ("Hi!", ""),
-
-  -- ConsoleMtl ()
-  runConsole (consoleWrite "Hi!") ""
-  ==
-  ((), "Hi!"),
-  
-  True] where
-  
-  runConsoleT = runReader . runWriterT
-  runConsole = runConsoleT . runConsoleMtl
 
 type ConsoleT = WriterT String (Reader String)
 instance Console ConsoleT where
@@ -218,19 +132,6 @@ instance Console AppMtl where
   consoleRead = ask
   consoleWrite = tell
 
-okApp = and [
-
-    -- AppMtl ()
-    runApp app inMemoryDB "Fizz"
-    ==
-    (,)
-      ((), (inMemoryDB <> [User 43 "Fizz"]))
-      "Yes?New user: Fizz.Bye!",
-      
-  True] where
-
-  runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
-
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
   AppMtl {
@@ -249,36 +150,5 @@ type UserId = Int
 type UserName = String
 data User = User { userId :: UserId, userName :: UserName }
   deriving (Eq, Ord, Show, Read)
-okLanguage = and [
-
-    -- UserId
-    userId (User 42 "Hello World!")
-    ==
-    42,
-
-    -- UserName
-    userName (User 42 "Hello World!")
-    ==
-    "Hello World!",
-
-  True]
-
 append :: a -> [a] -> [a]
 append = (flip (<>)) . pure
-
-okLibrary = and [
-
-    append '!' "Hi" == "Hi!",
-  
-  True]
-
-ok = and [
-  okLog,
-  okDB,
-  okConsole,
-  okApp,
-  okLanguage,
-  okLibrary,
-  True]
-
-
