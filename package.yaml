@@ -49,4 +49,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - monolith
+    - mtl
     - hspec

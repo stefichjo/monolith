@@ -1,7 +1,14 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 module Main where
 
 import Test.Hspec
 import Effects
+
+import Control.Monad.Reader
+import Control.Monad.Writer
+import Control.Monad.State
 
 main :: IO ()
 main = hspec spec
@@ -125,6 +132,65 @@ okLibrary = and [
     append '!' "Hi" == "Hi!",
   
   True]
+
+type LogT = Writer String
+instance Log LogT where
+
+  logWrite = tell
+
+newtype LogMtl a = LogMtl { runLogMtl :: LogT a }
+  deriving (Functor, Applicative, Monad, MonadWriter String)
+instance Log LogMtl where
+
+  logWrite msg = LogMtl $ logWrite msg
+
+instance Log AppMtl where
+
+  logWrite = tell
+
+type DBT = State [User]
+instance DB DBT where
+
+  dbCreate user = dbRead >>= put . append user
+  dbRead = get
+
+newtype DBMtl a = DBMtl { runDBMtl :: DBT a }
+  deriving (Functor, Applicative, Monad, MonadState [User])
+instance DB DBMtl where
+
+  dbCreate user = DBMtl $ dbCreate user
+  dbRead = DBMtl $ get
+
+instance DB AppMtl where
+
+  dbCreate user = dbRead >>= put . append user
+  dbRead = get
+
+type ConsoleT = WriterT String (Reader String)
+instance Console ConsoleT where
+
+  consoleRead = ask
+  consoleWrite = tell
+
+newtype ConsoleMtl a =
+  ConsoleMtl {
+    runConsoleMtl :: ConsoleT a }
+  deriving (Functor, Applicative, Monad, MonadReader String, MonadWriter String)
+instance Console ConsoleMtl where
+
+  consoleRead = ConsoleMtl $ consoleRead
+  consoleWrite msg = ConsoleMtl $ consoleWrite msg
+
+instance Console AppMtl where
+
+  consoleRead = ask
+  consoleWrite = tell
+
+type AppT = StateT [User] ConsoleT
+newtype AppMtl a =
+  AppMtl {
+    runAppMtl :: AppT a }
+  deriving (Functor, Applicative, Monad, MonadReader String, MonadWriter String, MonadState [User])
 
 {-
 Tagles Final:

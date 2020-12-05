@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e5c98373804297b5ccd3876d0ed368fb1950e76476ed2c168fd7ce2fd1145db0
+-- hash: 08271a6f09720fb110b15bf75cae9ff166b6f505e478bd29b82b5822d0e98676
 
 name:           monolith
 version:        0.1.0.0
@@ -64,4 +64,5 @@ test-suite monolith-test
       base >=4.7 && <5
     , hspec
     , monolith
+    , mtl
   default-language: Haskell2010
