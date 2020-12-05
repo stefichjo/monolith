@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE GADTs #-}
 
 module Main where
 
@@ -178,8 +179,12 @@ instance Console ConsoleMtl where
   consoleRead = ConsoleMtl $ consoleRead
   consoleWrite msg = ConsoleMtl $ consoleWrite msg
 
+data ConsoleDsl m a where
+  ConsoleRead :: ConsoleDsl m String
+  ConsoleWrite :: String -> ConsoleDsl m ()
+
 -- TODO use DBT and LogT as well
-type AppT = (StateT [User]) ConsoleT
+type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
 
   AppMtl {
