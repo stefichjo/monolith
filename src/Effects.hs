@@ -1,8 +1,12 @@
 {-# LANGUAGE RankNTypes #-}
 
-module Effects where
+module Effects (
+    module Utils,
+    module Effects
+  ) where
 
 import FileSystem
+import Utils
 import Polysemy
 
 type App m a =
@@ -56,14 +60,8 @@ instance Console IO where
 logFileName = "log" :: FilePath
 dbFileName = "db" :: FilePath
 
-inMemoryDB = [
-    User 42 "Bar",
-    User 23 "Foo"
-  ]
-
 type UserId = Int
 type UserName = String
 data User = User { userId :: UserId, userName :: UserName }
   deriving (Eq, Ord, Show, Read)
-append :: a -> [a] -> [a]
-append = (flip (<>)) . pure
+

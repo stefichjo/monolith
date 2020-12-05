@@ -192,6 +192,11 @@ newtype AppMtl a =
     runAppMtl :: AppT a }
   deriving (Functor, Applicative, Monad, MonadReader String, MonadWriter String, MonadState [User])
 
+inMemoryDB = [
+    User 42 "Bar",
+    User 23 "Foo"
+  ]
+
 {-
 Tagles Final:
 https://serokell.io/blog/tagless-final
