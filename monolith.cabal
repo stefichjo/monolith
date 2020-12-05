@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 28b96caecbb78031609a3c84a333a212bc7ecbf125a064f5d0a81b6d2aade359
+-- hash: eaddf00342f1ea289e169c2fbd3a1c965026938fd6d86ae1565880a412cfd669
 
 name:           monolith
 version:        0.1.0.0
@@ -62,7 +62,8 @@ test-suite monolith-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , hspec
     , monolith
     , mtl

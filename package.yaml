@@ -55,3 +55,4 @@ tests:
     - monolith
     - mtl
     - hspec
+    - QuickCheck

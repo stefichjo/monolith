@@ -4,6 +4,7 @@
 module Main where
 
 import Test.Hspec
+import Test.QuickCheck
 import Effects
 
 import Control.Monad.Reader
@@ -15,12 +16,14 @@ main = hspec spec
 
 spec :: Spec
 spec = do
+
   describe "ok" $ do
-    it "should be True" $ do
+    it "should be ok" $ do
       ok `shouldBe` True
-  describe "okLibrary" $ do
-    it "should be True" $ do
-      append '!' "Hi" `shouldBe` "Hi!"
+
+  describe "append" $ do
+    it "should append" $ property $
+      \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
 
 ok = and [
   okLog,
