@@ -5,6 +5,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 module Effects (
   module Polysemy,
@@ -88,73 +89,58 @@ data RandomDsl v m a where
 makeSem ''ConsoleDsl
 makeSem ''RandomDsl
 
-type ProgramBuilder r a = [ConsoleDsl, RandomDsl a] `Members` r => Sem r a
-type With dsl r = forall a. Sem (dsl ': r) a -> Sem r a
+type Builder r a = Sem r a
+type App' r a = '[ConsoleDsl, RandomDsl a] `Members` r => Builder r a
+type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
+type Build m a = Monad m => Builder '[Embed m] a -> m a
+type EmbedIO r = '[Embed IO] `Members` r
 
-withConsoleIO ::
-     Member (Embed IO) r
-  => With ConsoleDsl r
-withConsoleIO = interpret $ \case
-  PrintLine line -> embed (putStrLn line)
-  ReadLine       -> embed getLine
-
-withConsoleConst ::
-     String
-  -> With ConsoleDsl r
-withConsoleConst constLine = interpret $ \case
-  PrintLine line -> pure ()
-  ReadLine -> pure constLine
-
-withRandomIO ::
-     Member (Embed IO) r
-  => With (RandomDsl Int) r
-withRandomIO = interpret $ \case
-  NextRandom -> embed randomIO
-
-withRandomConst ::
-     Int
-  -> With (RandomDsl Int) r
-withRandomConst v = interpret $ \case
-  NextRandom -> pure v
-
-
-programBuilder :: ProgramBuilder r Int
-programBuilder = do
+app' :: App' r Int
+app' = do
   printLine "Insert your number:"
   i1 <- readLine
   i2 <- nextRandom
   pure (read i1 + i2)
 
-programM :: IO Int
-programM = programBuilder
+build :: Build m a
+build = runM
+
+withConsoleIO :: EmbedIO r => With ConsoleDsl r
+withConsoleIO = interpret $ \case
+  PrintLine line -> embed (putStrLn line)
+  ReadLine       -> embed getLine
+withRandomIO :: EmbedIO r => With (RandomDsl Int) r
+withRandomIO = interpret $ \case
+  NextRandom -> embed randomIO
+programIO :: IO Int
+programIO = app'
   & withConsoleIO
   & withRandomIO
-  & runM
+  & build
 
+withConsoleConst :: String -> With ConsoleDsl r
+withConsoleConst constLine = interpret $ \case
+  PrintLine line -> pure ()
+  ReadLine -> pure constLine
+withRandomConst :: Int -> With (RandomDsl Int) r
+withRandomConst v = interpret $ \case
+  NextRandom -> pure v
 programConst :: Monad m => m Int
-programConst = programBuilder
-  & withConsole
-  & withRandom
-  & runM
+programConst = app'
+  & withConsoleConst "10"
+  & withRandomConst 20
+  & build
 
 withConsole :: With ConsoleDsl r
 withConsole = withConsoleConst "10"
-
 withRandom :: With (RandomDsl Int) r
 withRandom = withRandomConst 20
 
-main' :: IO ()
-main' = programM >>= putStrLn . show
-
 -- generalize: `withConsole`, `withRandom`
+-- type family?
 
--- class Foo m where
---   data FooData :: * -> *
---   withConsole :: FooData Char
-
--- IDE
--- jump to definition
--- Hoogle
+main' :: IO ()
+main' = programIO >>= putStrLn . show
 
 class GMapKey k where
   data GMap k :: * -> *
