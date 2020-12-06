@@ -81,25 +81,25 @@ data User =
 ---- Paweł Szulc
 
 data ConsoleDsl m a where
-  PrintLine :: String -> ConsoleDsl m ()
-  ReadLine :: ConsoleDsl m String
+  PrintLineDsl :: String -> ConsoleDsl m ()
+  ReadLineDsl :: ConsoleDsl m String
 data RandomDsl v m a where
-  NextRandom :: RandomDsl v m v
+  NextRandomDsl :: RandomDsl v m v
 
 makeSem ''ConsoleDsl
 makeSem ''RandomDsl
 
 type Builder r a = Sem r a
-type App' r a = '[ConsoleDsl, RandomDsl a] `Members` r => Builder r a
 type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
 type Build m a = Monad m => Builder '[Embed m] a -> m a
 type EmbedIO r = '[Embed IO] `Members` r
+type App' r a = '[ConsoleDsl, RandomDsl a] `Members` r => Builder r a
 
 app' :: App' r Int
 app' = do
-  printLine "Insert your number:"
-  i1 <- readLine
-  i2 <- nextRandom
+  printLineDsl "Insert your number:"
+  i1 <- readLineDsl
+  i2 <- nextRandomDsl
   pure (read i1 + i2)
 
 build :: Build m a
@@ -107,11 +107,11 @@ build = runM
 
 withConsoleIO :: EmbedIO r => With ConsoleDsl r
 withConsoleIO = interpret $ \case
-  PrintLine line -> embed (putStrLn line)
-  ReadLine       -> embed getLine
+  PrintLineDsl line -> embed (putStrLn line)
+  ReadLineDsl       -> embed getLine
 withRandomIO :: EmbedIO r => With (RandomDsl Int) r
 withRandomIO = interpret $ \case
-  NextRandom -> embed randomIO
+  NextRandomDsl -> embed randomIO
 appIO :: IO Int
 appIO = app'
   & withConsoleIO
@@ -120,11 +120,11 @@ appIO = app'
 
 withConsoleConst :: String -> With ConsoleDsl r
 withConsoleConst constLine = interpret $ \case
-  PrintLine line -> pure ()
-  ReadLine -> pure constLine
+  PrintLineDsl line -> pure ()
+  ReadLineDsl -> pure constLine
 withRandomConst :: Int -> With (RandomDsl Int) r
 withRandomConst v = interpret $ \case
-  NextRandom -> pure v
+  NextRandomDsl -> pure v
 appConst :: Monad m => m Int
 appConst = app'
   & withConsoleConst "10"
