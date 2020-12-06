@@ -4,7 +4,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE TypeFamilies #-}
+-- {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ConstraintKinds #-}
 
 module Effects (
@@ -118,23 +118,21 @@ appIO = app'
   & withRandomIO
   & build
 
-withConsoleConst :: String -> With ConsoleDsl r
-withConsoleConst constLine = interpret $ \case
-  PrintLineDsl line -> pure ()
-  ReadLineDsl -> pure constLine
-withRandomConst :: Int -> With (RandomDsl Int) r
-withRandomConst v = interpret $ \case
-  NextRandomDsl -> pure v
-appConst :: Monad m => m Int
-appConst = app'
-  & withConsoleConst "10"
-  & withRandomConst 20
-  & build
+consoleConst = "10" :: String
+randomConst = 20 :: Int
 
 withConsole :: With ConsoleDsl r
-withConsole = withConsoleConst "10"
+withConsole = interpret $ \case
+  PrintLineDsl line -> pure ()
+  ReadLineDsl -> pure consoleConst
 withRandom :: With (RandomDsl Int) r
-withRandom = withRandomConst 20
+withRandom = interpret $ \case
+  NextRandomDsl -> pure randomConst
+appConst :: Monad m => m Int
+appConst = app'
+  & withConsole
+  & withRandom
+  & build
 
 -- generalize: `withConsole`, `withRandom`
 -- type family?
@@ -142,6 +140,7 @@ withRandom = withRandomConst 20
 main' :: IO ()
 main' = appIO >>= putStrLn . show
 
+{-
 class GMapKey k where
   data GMap k :: * -> *
   empty       :: GMap k v
@@ -159,4 +158,4 @@ instance GMapKey () where
   empty                    = GMapUnit Nothing
   lookup () (GMapUnit v)   = v
   insert () v (GMapUnit _) = GMapUnit $ Just v
-
+-}
