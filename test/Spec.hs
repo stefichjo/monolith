@@ -12,6 +12,7 @@ import Utils
 import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
+import Data.Function
 
 main :: IO ()
 main = hspec spec
@@ -26,6 +27,15 @@ spec = do
   describe "append" $ do
     it "should append" $ property $
       \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
+
+  describe "program builder" $ do
+    it "can build program that adds two numbers together (random and from console)" $ do
+      let
+        program = programBuilder
+          & runConsoleConst "10"
+          & runRandomConst 20
+          & run
+      program `shouldBe` 30
 
 ok = and [
   okLog,
