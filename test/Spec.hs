@@ -215,18 +215,4 @@ https://www.youtube.com/watch?v=gUPuWHAt6SA&t=57s
 Polysemy:
 https://www.youtube.com/watch?v=eth4y015BCU
 
-TODO
-* DSL (GADT)
-  * in Spec
-* DIY Member/Effect Interpreter "T"
-* Member, Eff
-* Sem Polysemy Interpreter
--}
-
-{-
-withdraw :: (
-  Member Bank r,
-  Member Logger r)
-  => Int
-  -> Eff r (Maybe Int)
 -}
