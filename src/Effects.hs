@@ -75,34 +75,7 @@ data User =
   deriving (
     Eq, Ord, Show, Read)
 
-{-
-data LogDsl m a where
-
-  LogWriteDsl :: String -> LogDsl m ()
-instance Log (LogDsl m) where
-
-  logWrite = LogWriteDsl
-
-data DbDsl m a where
-
-  DbCreateDsl :: User -> DbDsl m ()
-  DbReadDsl :: DbDsl m [User]
-instance DB (DbDsl m) where
-
-  dbCreate = DbCreateDsl
-  dbRead = DbReadDsl
-
-data ConsoleDsl m a where
-
-  ConsoleReadDsl :: ConsoleDsl m String
-  ConsoleWriteDsl :: String -> ConsoleDsl m ()
-instance Console (ConsoleDsl m) where
-
-  consoleRead = ConsoleReadDsl
-  consoleWrite = ConsoleWriteDsl
--}
-
-
+---- Paweł Szulc
 
 data ConsoleDsl m a where
   PrintLine :: String -> ConsoleDsl m ()
@@ -113,26 +86,32 @@ data RandomDsl v m a where
 makeSem ''ConsoleDsl
 makeSem ''RandomDsl
 
+type With dsl r = forall a. Sem (dsl ': r) a -> Sem r a
+
 withConsoleIO ::
      Member (Embed IO) r
-  => Sem (ConsoleDsl ': r) a -> Sem r a
+  => With ConsoleDsl r
 withConsoleIO = interpret $ \case
   PrintLine line -> embed (putStrLn line)
   ReadLine       -> embed getLine
 
-withRandomIO ::
-     Member (Embed IO) r
-  => Sem (RandomDsl Int ': r) a -> Sem r a
-withRandomIO = interpret $ \case
-  NextRandom -> embed randomIO
-
-runConsoleConst :: String -> Sem (ConsoleDsl ': r) a -> Sem r a
-runConsoleConst constLine = interpret $ \case
+withConsoleConst ::
+     String
+  -> With ConsoleDsl r
+withConsoleConst constLine = interpret $ \case
   PrintLine line -> pure ()
   ReadLine -> pure constLine
 
-runRandomConst :: Int -> Sem (RandomDsl Int ': r) a -> Sem r a
-runRandomConst v = interpret $ \case
+withRandomIO ::
+     Member (Embed IO) r
+  => With (RandomDsl Int) r
+withRandomIO = interpret $ \case
+  NextRandom -> embed randomIO
+
+withRandomConst ::
+     Int
+  -> With (RandomDsl Int) r
+withRandomConst v = interpret $ \case
   NextRandom -> pure v
 
 type ProgramBuilder r a =
@@ -158,8 +137,8 @@ programM = programBuilder
 
 program :: Int
 program = programBuilder
-  & runConsoleConst "10"
-  & runRandomConst 20
+  & withConsoleConst "10"
+  & withRandomConst 20
   & run
 
 -- generalize: `withConsole`, `withRandom`, `build`

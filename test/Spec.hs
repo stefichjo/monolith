@@ -32,8 +32,8 @@ spec = do
     it "can build program that adds two numbers together (random and from console)" $ do
       let
         program = programBuilder
-          & runConsoleConst "10"
-          & runRandomConst 20
+          & withConsoleConst "10"
+          & withRandomConst 20
           & run
       program `shouldBe` 30
 
