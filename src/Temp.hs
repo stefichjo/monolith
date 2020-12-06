@@ -18,36 +18,35 @@ data Random v m a where
 makeSem ''Console
 makeSem ''Random
 
-runConsoleIO ::
+withConsoleIO ::
      Member (Embed IO) r
   => Sem (Console ': r) a -> Sem r a
-runConsoleIO = interpret $ \case
+withConsoleIO = interpret $ \case
   PrintLine line -> embed (putStrLn line)
   ReadLine -> embed getLine
 
-runRandomIO ::
+withRandomIO ::
      Member (Embed IO) r
   => Sem (Random Int ': r) a -> Sem r a
-runRandomIO = interpret $ \case
+withRandomIO = interpret $ \case
   NextRandom -> embed randomIO
 
-program ::
+programBuilder ::
      Member Console r
   => Member (Random Int) r
   => Sem r Int
-program = do
+programBuilder = do
   printLine "Insert your number:"
   i1 <- readLine
   i2 <- nextRandom
   pure (read i1 + i2)
 
 main' :: IO ()
-main' = execute >>= putStrLn . show
+main' = program >>= putStrLn . show
   where
-    execute = program
-      & runConsoleIO
-      & runRandomIO
-      & runM
+    program = programBuilder
+      & withConsoleIO
+      & withRandomIO
+      & build
 
--- INFO program builder pattern (runM = build)
--- TODO runM . runConsoleIO $ program
+build = runM
