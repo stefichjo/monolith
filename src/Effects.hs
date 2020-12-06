@@ -88,6 +88,7 @@ data RandomDsl v m a where
 makeSem ''ConsoleDsl
 makeSem ''RandomDsl
 
+type ProgramBuilder r a = [ConsoleDsl, RandomDsl a] `Members` r => Sem r a
 type With dsl r = forall a. Sem (dsl ': r) a -> Sem r a
 
 withConsoleIO ::
@@ -116,10 +117,6 @@ withRandomConst ::
 withRandomConst v = interpret $ \case
   NextRandom -> pure v
 
-type ProgramBuilder r a =
-     Member ConsoleDsl r
-  => Member (RandomDsl a) r
-  => Sem r a
 
 programBuilder :: ProgramBuilder r Int
 programBuilder = do
@@ -134,11 +131,17 @@ programM = programBuilder
   & withRandomIO
   & runM
 
-program :: Int
-program = programBuilder
-  & withConsoleConst "10"
-  & withRandomConst 20
-  & run
+programConst :: Monad m => m Int
+programConst = programBuilder
+  & withConsole
+  & withRandom
+  & runM
+
+withConsole :: With ConsoleDsl r
+withConsole = withConsoleConst "10"
+
+withRandom :: With (RandomDsl Int) r
+withRandom = withRandomConst 20
 
 main' :: IO ()
 main' = programM >>= putStrLn . show

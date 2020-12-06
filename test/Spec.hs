@@ -31,12 +31,7 @@ spec = do
 
   describe "program builder" $ do
     it "can build program that adds two numbers together (random and from console)" $ do
-      let
-        program = programBuilder
-          & withConsoleConst "10"
-          & withRandomConst 20
-          & runM
-      program `shouldBe` Identity 30
+      programConst `shouldBe` Identity 30
 
 ok = and [
   okLog,
