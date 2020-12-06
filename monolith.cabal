@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: eaddf00342f1ea289e169c2fbd3a1c965026938fd6d86ae1565880a412cfd669
+-- hash: 4dced93b8e7e3be0dc5eba1c80be1a3c859dd5e978b23369913630c58e44e892
 
 name:           monolith
 version:        0.1.0.0
@@ -32,6 +32,7 @@ library
       Effects
   other-modules:
       FileSystem
+      Temp
       Paths_monolith
   hs-source-dirs:
       src
@@ -39,6 +40,7 @@ library
       base >=4.7 && <5
     , mtl
     , polysemy
+    , random
   default-language: Haskell2010
 
 executable monolith-exe

@@ -1,7 +1,7 @@
 {-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE GADTs #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE ConstrainedClassMethods #-}
+-- {-# LANGUAGE GADTs #-}
+-- {-# LANGUAGE TemplateHaskell, ScopedTypeVariables, FlexibleContexts, DataKinds #-}
 
 module Effects where
 
@@ -59,13 +59,16 @@ dbFileName = "db" :: FilePath
 
 type UserId = Int
 type UserName = String
-data User = User {
+data User =
+  
+  User {
     userId :: UserId,
     userName :: UserName
   }
-  deriving (Eq, Ord, Show, Read)
+  deriving (
+    Eq, Ord, Show, Read)
 
-
+{-
 data LogDsl m a where
 
   LogWriteDsl :: String -> LogDsl m ()
@@ -84,9 +87,10 @@ instance DB (DbDsl m) where
 
 data ConsoleDsl m a where
 
-  ConsoleRead :: ConsoleDsl m String
-  ConsoleWrite :: String -> ConsoleDsl m ()
+  ConsoleReadDsl :: ConsoleDsl m String
+  ConsoleWriteDsl :: String -> ConsoleDsl m ()
 instance Console (ConsoleDsl m) where
 
-  consoleRead = ConsoleRead
-  consoleWrite = ConsoleWrite
+  consoleRead = ConsoleReadDsl
+  consoleWrite = ConsoleWriteDsl
+-}

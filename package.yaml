@@ -31,6 +31,7 @@ library:
   dependencies:
     - mtl
     - polysemy
+    - random
 
 executables:
   monolith-exe:
