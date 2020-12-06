@@ -81,25 +81,32 @@ data User =
 ---- Paweł Szulc
 
 data ConsoleDsl m a where
+
   PrintLineDsl :: String -> ConsoleDsl m ()
   ReadLineDsl :: ConsoleDsl m String
 data RandomDsl v m a where
+
   NextRandomDsl :: RandomDsl v m v
+data LogDsl m a where
+
+  LogWriteDsl :: String -> LogDsl m ()
 
 makeSem ''ConsoleDsl
 makeSem ''RandomDsl
+makeSem ''LogDsl
 
 type Builder r a = Sem r a
 type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
 type Build m a = Monad m => Builder '[Embed m] a -> m a
 type EmbedIO r = '[Embed IO] `Members` r
-type App' r a = '[ConsoleDsl, RandomDsl a] `Members` r => Builder r a
+type App' r a = '[ConsoleDsl, RandomDsl Int, LogDsl] `Members` r => Builder r a
 
 app' :: App' r Int
 app' = do
   printLineDsl "Insert your number:"
   i1 <- readLineDsl
   i2 <- nextRandomDsl
+  logWriteDsl $ "Adding " <> show i1 <> " and " <> show i2
   pure (read i1 + i2)
 
 build :: Build m a
@@ -112,8 +119,13 @@ withConsoleIO = interpret $ \case
 withRandomIO :: EmbedIO r => With (RandomDsl Int) r
 withRandomIO = interpret $ \case
   NextRandomDsl -> embed randomIO
+withLogIO :: EmbedIO r => With LogDsl r
+withLogIO = interpret $ \case
+  LogWriteDsl msg -> embed (addFile logFileName msg)
+
 appIO :: IO Int
 appIO = app'
+  & withLogIO
   & withConsoleIO
   & withRandomIO
   & build
@@ -128,10 +140,15 @@ withConsole = interpret $ \case
 withRandom :: With (RandomDsl Int) r
 withRandom = interpret $ \case
   NextRandomDsl -> pure randomConst
+withLog :: With LogDsl r
+withLog = interpret $ \case
+  LogWriteDsl msg -> pure ()
+
 appConst :: Monad m => m Int
 appConst = app'
   & withConsole
   & withRandom
+  & withLog
   & build
 
 -- generalize: `withConsole`, `withRandom`
