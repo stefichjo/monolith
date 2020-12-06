@@ -97,8 +97,8 @@ makeSem ''LogDsl
 
 type Builder r a = Sem r a
 type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
+type WithIO m r = '[Embed IO] `Members` r => With m r
 type Build m a = Monad m => Builder '[Embed m] a -> m a
-type EmbedIO r = '[Embed IO] `Members` r
 type App' r a = '[ConsoleDsl, RandomDsl Int, LogDsl] `Members` r => Builder r a
 
 app' :: App' r Int
@@ -112,14 +112,14 @@ app' = do
 build :: Build m a
 build = runM
 
-withConsoleIO :: EmbedIO r => With ConsoleDsl r
+withConsoleIO :: WithIO ConsoleDsl r
 withConsoleIO = interpret $ \case
   PrintLineDsl line -> embed (putStrLn line)
   ReadLineDsl       -> embed getLine
-withRandomIO :: EmbedIO r => With (RandomDsl Int) r
+withRandomIO :: WithIO (RandomDsl Int) r
 withRandomIO = interpret $ \case
   NextRandomDsl -> embed randomIO
-withLogIO :: EmbedIO r => With LogDsl r
+withLogIO :: WithIO LogDsl r
 withLogIO = interpret $ \case
   LogWriteDsl msg -> embed (addFile logFileName msg)
 
