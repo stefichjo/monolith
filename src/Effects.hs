@@ -112,8 +112,8 @@ withConsoleIO = interpret $ \case
 withRandomIO :: EmbedIO r => With (RandomDsl Int) r
 withRandomIO = interpret $ \case
   NextRandom -> embed randomIO
-programIO :: IO Int
-programIO = app'
+appIO :: IO Int
+appIO = app'
   & withConsoleIO
   & withRandomIO
   & build
@@ -125,8 +125,8 @@ withConsoleConst constLine = interpret $ \case
 withRandomConst :: Int -> With (RandomDsl Int) r
 withRandomConst v = interpret $ \case
   NextRandom -> pure v
-programConst :: Monad m => m Int
-programConst = app'
+appConst :: Monad m => m Int
+appConst = app'
   & withConsoleConst "10"
   & withRandomConst 20
   & build
@@ -140,7 +140,7 @@ withRandom = withRandomConst 20
 -- type family?
 
 main' :: IO ()
-main' = programIO >>= putStrLn . show
+main' = appIO >>= putStrLn . show
 
 class GMapKey k where
   data GMap k :: * -> *

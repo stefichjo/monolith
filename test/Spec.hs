@@ -29,9 +29,9 @@ spec = do
     it "should append" $ property $
       \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
 
-  describe "program builder" $ do
-    it "can build program that adds two numbers together (random and from console)" $ do
-      programConst `shouldBe` Identity 30
+  describe "app builder" $ do
+    it "can build an app that adds two numbers together (random and from console)" $ do
+      appConst `shouldBe` Identity 30
 
 ok = and [
   okLog,
