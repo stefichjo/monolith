@@ -4,6 +4,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Effects (
   module Polysemy,
@@ -15,6 +16,7 @@ import Utils
 import Polysemy
 import Data.Function ((&))
 import System.Random (randomIO)
+import qualified Data.IntMap
 
 type App m a =
   Log m =>
@@ -126,9 +128,6 @@ programBuilder = do
   i2 <- nextRandom
   pure (read i1 + i2)
 
-main' :: IO ()
-main' = programM >>= putStrLn . show
-
 programM :: IO Int
 programM = programBuilder
   & withConsoleIO
@@ -141,8 +140,34 @@ program = programBuilder
   & withRandomConst 20
   & run
 
--- generalize: `withConsole`, `withRandom`, `build`
+main' :: IO ()
+main' = programM >>= putStrLn . show
+
+-- generalize: `withConsole`, `withRandom`
+
+-- class Foo m where
+--   data FooData :: * -> *
+--   withConsole :: FooData Char
 
 -- IDE
 -- jump to definition
 -- Hoogle
+
+class GMapKey k where
+  data GMap k :: * -> *
+  empty       :: GMap k v
+  lookup      :: k -> GMap k v -> Maybe v
+  insert      :: k -> v -> GMap k v -> GMap k v
+
+instance GMapKey Int where
+  data GMap Int v        = GMapInt (Data.IntMap.IntMap v)
+  empty                  = GMapInt Data.IntMap.empty
+  lookup k   (GMapInt m) = Data.IntMap.lookup k m
+  insert k v (GMapInt m) = GMapInt (Data.IntMap.insert k v m)
+
+instance GMapKey () where
+  data GMap () v           = GMapUnit (Maybe v)
+  empty                    = GMapUnit Nothing
+  lookup () (GMapUnit v)   = v
+  insert () v (GMapUnit _) = GMapUnit $ Just v
+

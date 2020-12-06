@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f677bdbceab2841f79060bf94a7552286fc57d339b915e3629ca7f20964909b1
+-- hash: 231ab6c6cf70389b512af86aaf0ec62877ac301aa0fe9aaff4b9c360432889bb
 
 name:           monolith
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , mtl
     , polysemy
     , random

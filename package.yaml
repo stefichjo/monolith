@@ -32,6 +32,7 @@ library:
     - mtl
     - polysemy
     - random
+    - containers
 
 executables:
   monolith-exe:

@@ -12,6 +12,7 @@ import Utils
 import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
+import Control.Monad.Identity
 import Data.Function
 
 main :: IO ()
@@ -34,8 +35,8 @@ spec = do
         program = programBuilder
           & withConsoleConst "10"
           & withRandomConst 20
-          & run
-      program `shouldBe` 30
+          & runM
+      program `shouldBe` Identity 30
 
 ok = and [
   okLog,
