@@ -82,8 +82,8 @@ data User =
 
 data ConsoleDsl m a where
 
-  PrintLineDsl :: String -> ConsoleDsl m ()
-  ReadLineDsl :: ConsoleDsl m String
+  ConsoleWriteDsl :: String -> ConsoleDsl m ()
+  ConsoleReadDsl :: ConsoleDsl m String
 data RandomDsl v m a where
 
   NextRandomDsl :: RandomDsl v m v
@@ -103,8 +103,8 @@ type App' r a = '[ConsoleDsl, RandomDsl Int, LogDsl] `Members` r => Builder r a
 
 app' :: App' r Int
 app' = do
-  printLineDsl "Insert your number:"
-  i1 <- readLineDsl
+  consoleWriteDsl "Insert your number:"
+  i1 <- consoleReadDsl
   i2 <- nextRandomDsl
   logWriteDsl $ "Adding " <> show i1 <> " and " <> show i2
   pure (read i1 + i2)
@@ -114,8 +114,8 @@ build = runM
 
 withConsoleIO :: WithIO ConsoleDsl r
 withConsoleIO = interpret $ \case
-  PrintLineDsl line -> embed (putStrLn line)
-  ReadLineDsl       -> embed getLine
+  ConsoleWriteDsl line -> embed (putStrLn line)
+  ConsoleReadDsl       -> embed getLine
 withRandomIO :: WithIO (RandomDsl Int) r
 withRandomIO = interpret $ \case
   NextRandomDsl -> embed randomIO
@@ -135,8 +135,8 @@ randomConst = 20 :: Int
 
 withConsole :: With ConsoleDsl r
 withConsole = interpret $ \case
-  PrintLineDsl line -> pure ()
-  ReadLineDsl -> pure consoleConst
+  ConsoleWriteDsl line -> pure ()
+  ConsoleReadDsl -> pure consoleConst
 withRandom :: With (RandomDsl Int) r
 withRandom = interpret $ \case
   NextRandomDsl -> pure randomConst
