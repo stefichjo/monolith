@@ -1,9 +1,9 @@
+{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ConstrainedClassMethods #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TemplateHaskell, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ConstraintKinds #-}
 
 module Effects (
@@ -66,18 +66,6 @@ app = do
   logWrite $ "New user: " <> name <> "."
   dbCreateNextUser name
   consoleWrite "Bye!"
-
--- TODO move to library
-type Builder r a = Sem r a
-type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
-type WithIO m r = '[Embed IO] `Members` r => With m r
-type Build m a = Monad m => Builder '[Embed m] a -> m a
-build :: Build m a
-build = runM
-
-logFileName = "log" :: FilePath
-dbFileName = "db" :: FilePath
--- Splice --
 
 data LogDsl m a where {
 
@@ -153,9 +141,4 @@ appConst = appDsl
 main' :: IO ()
 main' = appIO >>= putStrLn . show
 
-consoleConst = "10" :: String
-randomConst = 20 :: Int
-inMemoryDB = [
-    User 42 "Bar",
-    User 23 "Foo"
-  ]
+inMemoryDB = read inMemoryDbRaw :: [User]
