@@ -90,10 +90,15 @@ data RandomDsl v m a where
 data LogDsl m a where
 
   LogWriteDsl :: String -> LogDsl m ()
+data DbDsl m a where
+
+  DbCreateDsl :: User -> DbDsl m ()
+  DbReadDsl :: DbDsl m [User]
 
 makeSem ''ConsoleDsl
 makeSem ''RandomDsl
 makeSem ''LogDsl
+makeSem ''DbDsl
 
 type Builder r a = Sem r a
 type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
@@ -122,16 +127,25 @@ withRandomIO = interpret $ \case
 withLogIO :: WithIO LogDsl r
 withLogIO = interpret $ \case
   LogWriteDsl msg -> embed (addFile logFileName msg)
+withDbIO :: WithIO DbDsl r
+withDbIO = interpret $ \case
+  DbCreateDsl user -> embed . addFile dbFileName $ user
+  DbReadDsl -> embed (map read . lines <$> readFileContents dbFileName)
 
 appIO :: IO Int
 appIO = app'
   & withLogIO
   & withConsoleIO
   & withRandomIO
+  & withDbIO
   & build
 
 consoleConst = "10" :: String
 randomConst = 20 :: Int
+inMemoryDB = [
+    User 42 "Bar",
+    User 23 "Foo"
+  ]
 
 withConsole :: With ConsoleDsl r
 withConsole = interpret $ \case
@@ -143,12 +157,17 @@ withRandom = interpret $ \case
 withLog :: With LogDsl r
 withLog = interpret $ \case
   LogWriteDsl msg -> pure ()
+withDb :: With DbDsl r
+withDb = interpret $ \case
+  DbCreateDsl user -> pure ()
+  DbReadDsl -> pure inMemoryDB
 
 appConst :: Monad m => m Int
 appConst = app'
   & withConsole
   & withRandom
   & withLog
+  & withDb
   & build
 
 -- generalize: `withConsole`, `withRandom`

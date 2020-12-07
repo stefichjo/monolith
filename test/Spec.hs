@@ -205,11 +205,6 @@ instance Console AppMtl where
   consoleRead = ask
   consoleWrite = tell
 
-inMemoryDB = [
-    User 42 "Bar",
-    User 23 "Foo"
-  ]
-
 {-
 Tagles Final:
 https://serokell.io/blog/tagless-final
