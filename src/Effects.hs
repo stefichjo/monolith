@@ -6,6 +6,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Effects (
   module Polysemy,
@@ -30,7 +31,11 @@ data User =
   deriving (
     Eq, Ord, Show, Read)
 
+-- TODO Event instead of ()
+-- REFACTOR JSON
+
 -- TODO move to submodules Log'/Log
+-- Split here: Tagless Final
 
 class Log' m where
 
@@ -70,34 +75,26 @@ app' = do
   dbCreateNextUser' name
   consoleWrite' "Bye!"
 
+-- Split here: Polysemy
+
 data Log m a where {
 
     LogWrite :: String -> Log m ();
   
   }; makeSem ''Log
-withLogIO :: WithIO Log r
-withLogIO = interpret $ \case
-  LogWrite msg -> embed (addFile logFileName msg)
 data Console m a where {
 
     ConsoleWrite :: String -> Console m ();
     ConsoleRead :: Console m String;
 
   }; makeSem ''Console
-withConsoleIO :: WithIO Console r
-withConsoleIO = interpret $ \case
-  ConsoleWrite line -> embed (putStrLn line)
-  ConsoleRead       -> embed getLine
 data DB m a where {
 
     DbCreate :: User -> DB m ();
     DbRead :: DB m [User];
 
   }; makeSem ''DB
-withDbIO :: WithIO DB r
-withDbIO = interpret $ \case
-  DbCreate user -> embed . addFile dbFileName $ user
-  DbRead -> embed (map read . lines <$> readFileContents dbFileName)
+
 dbCreateNextUser :: String -> App r ()
 dbCreateNextUser name = do
   User lastId  _ <- maximum <$> dbRead
@@ -113,36 +110,31 @@ app = do
   dbCreateNextUser name
   consoleWrite "Bye!"
 
+-- REFACTOR generalize: `app`, `withLog`, ...
+
 appIO :: IO ()
 appIO = app
-  & withLogIO
-  & withConsoleIO
-  & withDbIO
+  & (interpret $ \case
+      LogWrite msg -> embed (addFile logFileName msg))
+  & (interpret $ \case
+      ConsoleWrite line -> embed (putStrLn line)
+      ConsoleRead       -> embed getLine)
+  & (interpret $ \case
+      DbCreate user -> embed . addFile dbFileName $ user
+      DbRead -> embed (map read . lines <$> readFileContents dbFileName))
   & build
 
-withLog :: With Log r
-withLog = interpret $ \case
-  LogWrite msg -> pure ()
-withConsole :: With Console r
-withConsole = interpret $ \case
-  ConsoleWrite line -> pure ()
-  ConsoleRead -> pure consoleConst
-withDb :: With DB r
-withDb = interpret $ \case
-  DbCreate user -> pure ()
-  DbRead -> pure inMemoryDB
-
-appConst :: Monad m => m ()
-appConst = app
-  & withLog
-  & withConsole
-  & withDb
+appM :: Monad m => m ()
+appM = app
+  & (interpret $ \case
+      LogWrite msg -> pure ())
+  & (interpret $ \case
+      ConsoleWrite line -> pure ()
+      ConsoleRead       -> pure consoleConst)
+  & (interpret $ \case
+      DbCreate user -> pure ()
+      DbRead        -> pure inMemoryDB)
   & build
-
--- REFACTOR generalize: `withConsole`, `withRandom`
-
-main' :: IO ()
-main' = appIO >>= putStrLn . show
 
 inMemoryDB = read inMemoryDbRaw :: [User]
 
