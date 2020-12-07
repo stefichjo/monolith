@@ -4,7 +4,6 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
--- {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ConstraintKinds #-}
 
 module Effects (
@@ -73,6 +72,8 @@ type Builder r a = Sem r a
 type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
 type WithIO m r = '[Embed IO] `Members` r => With m r
 type Build m a = Monad m => Builder '[Embed m] a -> m a
+build :: Build m a
+build = runM
 
 logFileName = "log" :: FilePath
 dbFileName = "db" :: FilePath
@@ -120,9 +121,6 @@ appDsl = do
   logWriteDsl $ "New user: " <> name <> "."
   dbCreateNextUserDsl name
   consoleWriteDsl "Bye!"
-
-build :: Build m a
-build = runM
 
 appIO :: IO ()
 appIO = appDsl
