@@ -5,6 +5,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 
 module Effects (
   module Polysemy,
@@ -144,3 +145,12 @@ main' :: IO ()
 main' = appIO >>= putStrLn . show
 
 inMemoryDB = read inMemoryDbRaw :: [User]
+
+-- TODO just for fun: App' instances of App
+-- TODO instance Log' (* -> *) where
+
+-- instance Log' ("App") where
+
+-- TODO type for (* -> *)
+-- instance Log' (App r) where
+
