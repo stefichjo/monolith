@@ -29,21 +29,21 @@ data User =
   deriving (
     Eq, Ord, Show, Read)
 
-class Log m where
+class Logs m where
 
   logWrite :: String -> m ()
-instance Log IO where
+instance Logs IO where
 
   logWrite = addFile logFileName
-class Console m where
+class Consoles m where
 
   consoleRead :: m String
   consoleWrite :: String -> m ()
-instance Console IO where
+instance Consoles IO where
 
   consoleRead = getLine
   consoleWrite = putStrLn
-class DB m where
+class DBs m where
 
   dbCreate :: User -> m ()
   dbRead :: m [User]
@@ -52,14 +52,14 @@ class DB m where
   dbCreateNextUser name = do
     User lastId _ <- maximum <$> dbRead
     dbCreate (User (succ lastId) name)
-instance DB IO where
+instance DBs IO where
 
   dbCreate = addFile dbFileName
   dbRead = map read . lines <$> readFileContents dbFileName
 
-type App m a = (Monad m, Log m, Console m, DB m) => m a
+type Apps m a = (Monad m, Logs m, Consoles m, DBs m) => m a
 
-app :: App m ()
+app :: Apps m ()
 app = do
   consoleWrite "Yes?"
   name <- consoleRead
@@ -67,42 +67,42 @@ app = do
   dbCreateNextUser name
   consoleWrite "Bye!"
 
-data LogDsl m a where {
+data Log m a where {
 
-    LogWriteDsl :: String -> LogDsl m ();
+    LogWriteDsl :: String -> Log m ();
   
-  }; makeSem ''LogDsl
-withLogIO :: WithIO LogDsl r
+  }; makeSem ''Log
+withLogIO :: WithIO Log r
 withLogIO = interpret $ \case
   LogWriteDsl msg -> embed (addFile logFileName msg)
-data ConsoleDsl m a where {
+data Console m a where {
 
-    ConsoleWriteDsl :: String -> ConsoleDsl m ();
-    ConsoleReadDsl :: ConsoleDsl m String;
+    ConsoleWriteDsl :: String -> Console m ();
+    ConsoleReadDsl :: Console m String;
 
-  }; makeSem ''ConsoleDsl
-withConsoleIO :: WithIO ConsoleDsl r
+  }; makeSem ''Console
+withConsoleIO :: WithIO Console r
 withConsoleIO = interpret $ \case
   ConsoleWriteDsl line -> embed (putStrLn line)
   ConsoleReadDsl       -> embed getLine
-data DbDsl m a where {
+data DB m a where {
 
-    DbCreateDsl :: User -> DbDsl m ();
-    DbReadDsl :: DbDsl m [User];
+    DbCreateDsl :: User -> DB m ();
+    DbReadDsl :: DB m [User];
 
-  }; makeSem ''DbDsl
-withDbIO :: WithIO DbDsl r
+  }; makeSem ''DB
+withDbIO :: WithIO DB r
 withDbIO = interpret $ \case
   DbCreateDsl user -> embed . addFile dbFileName $ user
   DbReadDsl -> embed (map read . lines <$> readFileContents dbFileName)
-dbCreateNextUserDsl :: String -> AppDsl r ()
+dbCreateNextUserDsl :: String -> App r ()
 dbCreateNextUserDsl name = do
   User lastId  _ <- maximum <$> dbReadDsl
   dbCreateDsl (User (succ lastId) name)
 
-type AppDsl r a = '[ConsoleDsl, DbDsl, LogDsl] `Members` r => Builder r a
+type App r a = '[Console, DB, Log] `Members` r => Builder r a
 
-appDsl :: AppDsl r ()
+appDsl :: App r ()
 appDsl = do
   consoleWriteDsl "Yes?"
   name <- consoleReadDsl
@@ -117,14 +117,14 @@ appIO = appDsl
   & withDbIO
   & build
 
-withLog :: With LogDsl r
+withLog :: With Log r
 withLog = interpret $ \case
   LogWriteDsl msg -> pure ()
-withConsole :: With ConsoleDsl r
+withConsole :: With Console r
 withConsole = interpret $ \case
   ConsoleWriteDsl line -> pure ()
   ConsoleReadDsl -> pure consoleConst
-withDb :: With DbDsl r
+withDb :: With DB r
 withDb = interpret $ \case
   DbCreateDsl user -> pure ()
   DbReadDsl -> pure inMemoryDB
