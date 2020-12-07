@@ -31,7 +31,7 @@ spec = do
 
   describe "app builder" $ do
     it "can build an app that adds two numbers together (random and from console)" $ do
-      appConst `shouldBe` Identity 30
+      appM `shouldBe` Identity ()
 
 ok = and [
   okLog,
@@ -43,12 +43,12 @@ ok = and [
 okLog = and [
 
     -- LogT ()
-    runLogT (logWrite "Hi!")
+    runLogT (logWrite' "Hi!")
     ==
     ((), "Hi!"),
     
     -- LogMtl ()
-    runLog (logWrite "Hi!")
+    runLog (logWrite' "Hi!")
     ==
     ((), "Hi!"),
     
@@ -59,22 +59,22 @@ okLog = and [
 okDB = and [
 
   -- DBT ()
-  runDBT (dbCreate (last inMemoryDB)) (init inMemoryDB)
+  runDBT (dbCreate' (last inMemoryDB)) (init inMemoryDB)
   ==
   ((), inMemoryDB),
   
   -- DBT [User]
-  runDBT dbRead inMemoryDB
+  runDBT dbRead' inMemoryDB
   ==
   (inMemoryDB, inMemoryDB),
 
   -- DBMtl ()
-  runDB (dbCreate (last inMemoryDB)) (init inMemoryDB)
+  runDB (dbCreate' (last inMemoryDB)) (init inMemoryDB)
   ==
   ((), inMemoryDB),
   
   -- DBMtl [User]
-  runDB dbRead inMemoryDB
+  runDB dbRead' inMemoryDB
   ==
   (inMemoryDB, inMemoryDB),
 
@@ -85,23 +85,23 @@ okDB = and [
 okConsole = and [
 
   -- ConsoleT String
-  runConsoleT (consoleRead) "Hi!"
+  runConsoleT (consoleRead') "Hi!"
   ==
   ("Hi!", ""),
   
   -- ConsoleT ()
-  runConsoleT (consoleWrite "Hi!") ""
+  runConsoleT (consoleWrite' "Hi!") ""
   ==
   ((), "Hi!"),
   
   
   -- ConsoleMtl String
-  runConsole (consoleRead) "Hi!"
+  runConsole (consoleRead') "Hi!"
   ==
   ("Hi!", ""),
 
   -- ConsoleMtl ()
-  runConsole (consoleWrite "Hi!") ""
+  runConsole (consoleWrite' "Hi!") ""
   ==
   ((), "Hi!"),
   
@@ -112,7 +112,7 @@ okConsole = and [
 okApp = and [
 
     -- AppMtl ()
-    runApp app inMemoryDB "Fizz"
+    runApp app' inMemoryDB "Fizz"
     ==
     (,)
       ((), (inMemoryDB <> [User 43 "Fizz"]))
@@ -136,9 +136,9 @@ okLanguage = and [
   True]
 
 type LogT = Writer String
-instance Log LogT where
+instance Log' LogT where
 
-  logWrite = tell
+  logWrite' = tell
 newtype LogMtl a =
   
   LogMtl {
@@ -146,15 +146,15 @@ newtype LogMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadWriter String)
-instance Log LogMtl where
+instance Log' LogMtl where
 
-  logWrite msg = LogMtl $ logWrite msg
+  logWrite' msg = LogMtl $ logWrite' msg
 
 type DBT = State [User]
-instance DB DBT where
+instance DB' DBT where
 
-  dbCreate user = dbRead >>= put . append user
-  dbRead = get
+  dbCreate' user = dbRead' >>= put . append user
+  dbRead' = get
 newtype DBMtl a =
   
   DBMtl {
@@ -162,16 +162,16 @@ newtype DBMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadState [User])
-instance DB DBMtl where
+instance DB' DBMtl where
 
-  dbCreate user = DBMtl $ dbCreate user
-  dbRead = DBMtl $ get
+  dbCreate' user = DBMtl $ dbCreate' user
+  dbRead' = DBMtl $ get
 
 type ConsoleT = WriterT String (Reader String)
-instance Console ConsoleT where
+instance Console' ConsoleT where
 
-  consoleRead = ask
-  consoleWrite = tell
+  consoleRead' = ask
+  consoleWrite' = tell
 newtype ConsoleMtl a =
 
   ConsoleMtl {
@@ -179,10 +179,10 @@ newtype ConsoleMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadReader String, MonadWriter String)
-instance Console ConsoleMtl where
+instance Console' ConsoleMtl where
 
-  consoleRead = ConsoleMtl $ consoleRead
-  consoleWrite msg = ConsoleMtl $ consoleWrite msg
+  consoleRead' = ConsoleMtl $ consoleRead'
+  consoleWrite' msg = ConsoleMtl $ consoleWrite' msg
 
 -- TODO use DBT and LogT as well
 type AppT = StateT [User] ConsoleT
@@ -193,17 +193,17 @@ newtype AppMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadReader String, MonadWriter String, MonadState [User])
-instance Log AppMtl where
+instance Log' AppMtl where
 
-  logWrite = tell
-instance DB AppMtl where
+  logWrite' = tell
+instance DB' AppMtl where
 
-  dbCreate user = dbRead >>= put . append user
-  dbRead = get
-instance Console AppMtl where
+  dbCreate' user = dbRead' >>= put . append user
+  dbRead' = get
+instance Console' AppMtl where
 
-  consoleRead = ask
-  consoleWrite = tell
+  consoleRead' = ask
+  consoleWrite' = tell
 
 {-
 Tagles Final:
