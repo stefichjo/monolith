@@ -29,21 +29,21 @@ data User =
   deriving (
     Eq, Ord, Show, Read)
 
-class Logs m where
+class Log' m where
 
   logWrite :: String -> m ()
-instance Logs IO where
+instance Log' IO where
 
   logWrite = addFile logFileName
-class Consoles m where
+class Console' m where
 
   consoleRead :: m String
   consoleWrite :: String -> m ()
-instance Consoles IO where
+instance Console' IO where
 
   consoleRead = getLine
   consoleWrite = putStrLn
-class DBs m where
+class DB' m where
 
   dbCreate :: User -> m ()
   dbRead :: m [User]
@@ -52,14 +52,14 @@ class DBs m where
   dbCreateNextUser name = do
     User lastId _ <- maximum <$> dbRead
     dbCreate (User (succ lastId) name)
-instance DBs IO where
+instance DB' IO where
 
   dbCreate = addFile dbFileName
   dbRead = map read . lines <$> readFileContents dbFileName
 
-type Apps m a = (Monad m, Logs m, Consoles m, DBs m) => m a
+type App' m a = (Monad m, Log' m, Console' m, DB' m) => m a
 
-app :: Apps m ()
+app :: App' m ()
 app = do
   consoleWrite "Yes?"
   name <- consoleRead
