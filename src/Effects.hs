@@ -105,6 +105,7 @@ type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
 type WithIO m r = '[Embed IO] `Members` r => With m r
 type Build m a = Monad m => Builder '[Embed m] a -> m a
 type App' r a = '[ConsoleDsl, RandomDsl Int, LogDsl] `Members` r => Builder r a
+type AppDsl r a = '[ConsoleDsl, DbDsl, LogDsl] `Members` r => Builder r a
 
 app' :: App' r Int
 app' = do
@@ -113,6 +114,19 @@ app' = do
   i2 <- nextRandomDsl
   logWriteDsl $ "Adding " <> show i1 <> " and " <> show i2
   pure (read i1 + i2)
+
+appDsl :: AppDsl r ()
+appDsl = do
+  consoleWriteDsl "Yes?"
+  name <- consoleReadDsl
+  logWriteDsl $ "New user: " <> name <> "."
+  dbCreateNextUserDsl name
+  consoleWriteDsl "Bye!"
+
+dbCreateNextUserDsl :: String -> AppDsl r ()
+dbCreateNextUserDsl name = do
+  User lastId  _ <- maximum <$> dbReadDsl
+  dbCreateDsl (User (succ lastId) name)
 
 build :: Build m a
 build = runM
