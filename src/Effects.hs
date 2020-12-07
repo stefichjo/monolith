@@ -168,23 +168,6 @@ instance Log' LogMtl where
 
   logWrite' msg = LogMtl $ logWrite' msg
 
-type DBT = State [User]
-instance DB' DBT where
-
-  dbCreate' user = dbRead' >>= put . append user
-  dbRead' = get
-newtype DBMtl a =
-  
-  DBMtl {
-    runDBMtl :: DBT a }
-  deriving (
-    Functor, Applicative, Monad,
-    MonadState [User])
-instance DB' DBMtl where
-
-  dbCreate' user = DBMtl $ dbCreate' user
-  dbRead' = DBMtl $ get
-
 type ConsoleT = WriterT String (Reader String)
 instance Console' ConsoleT where
 
@@ -201,6 +184,23 @@ instance Console' ConsoleMtl where
 
   consoleRead' = ConsoleMtl $ consoleRead'
   consoleWrite' msg = ConsoleMtl $ consoleWrite' msg
+
+type DBT = State [User]
+instance DB' DBT where
+
+  dbCreate' user = dbRead' >>= put . append user
+  dbRead' = get
+newtype DBMtl a =
+  
+  DBMtl {
+    runDBMtl :: DBT a }
+  deriving (
+    Functor, Applicative, Monad,
+    MonadState [User])
+instance DB' DBMtl where
+
+  dbCreate' user = DBMtl $ dbCreate' user
+  dbRead' = DBMtl $ get
 
 -- TODO use DBT and LogT as well
 type AppT_ = (StateT [User]) ConsoleT
@@ -231,3 +231,16 @@ instance Console' AppMtl where
 
   consoleRead' = ask
   consoleWrite' = tell
+
+type AppMock = Identity
+instance Log' AppMock where
+  logWrite' msg = return ()
+instance Console' AppMock where
+  consoleRead' = return consoleConst
+  consoleWrite' msg = return ()
+instance DB' AppMock where
+  dbCreate' user = return ()
+  dbRead' = return inMemoryDB
+
+mainIdentity :: AppMock ()
+mainIdentity = app'
