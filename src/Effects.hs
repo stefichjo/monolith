@@ -140,6 +140,16 @@ type AppIO = IO
 appIO :: AppIO ()
 appIO = runIO app
 
+{-
+Now, generalizing over `runIO` and `runMock` is generalizing over `AppIO` and `AppMock`. Enter type classes, again.
+-}
+-- TODO Embed m
+class Monad m => Run m where
+
+instance Run AppIO where
+
+instance Run AppMock where
+
 runIO :: Sem '[DB, Console, Log, Embed AppIO] a -> AppIO a
 runIO =
   runM
@@ -172,7 +182,6 @@ runMock =
       (interpret $ \case
         DbCreate user -> return ()
         DbRead        -> return $ read inMemoryDbRaw)
-
 
 -- TODO just for fun: App' instances of App
 -- TODO instance Log' (* -> *) where
