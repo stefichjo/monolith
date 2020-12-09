@@ -146,6 +146,9 @@ https://hackage.haskell.org/package/polysemy
 
 Clean Architecture:
 https://github.com/thma/PolysemyCleanArchitecture
+
+Events:
+https://blog.jayway.com/2013/06/20/dont-publish-domain-events-return-them/
 -}
 
 -- TODO Event instead of ()
@@ -153,3 +156,4 @@ https://github.com/thma/PolysemyCleanArchitecture
 
 -- TODO move to submodules Log'/Log
 -- TODO use DBT and LogT as well
+

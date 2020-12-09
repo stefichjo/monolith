@@ -80,19 +80,24 @@ instance DB' IO where
   dbCreate' = addFile dbFileName
   dbRead' = map read . lines <$> readFileContents dbFileName
 
-app' :: App' m ()
+-- TODO User instead of ()
+
+type Event = User
+
+app' :: App' m Event
 app' = do
   consoleWrite' "Yes?"
   name <- consoleRead'
   logWrite' $ "New user: " <> name <> "."
   dbCreateNextUser' name
   consoleWrite' "Bye!"
+  return $ User 42 "sts"
 
-mainMock' :: AppMock ()
+mainMock' :: AppMock Event
 mainMock' = app'
 
 mainIO' :: IO ()
-mainIO' = app'
+mainIO' = app' >>= print
 
 data Log m a where {
 
@@ -119,17 +124,18 @@ dbCreateNextUser name = do
 
 type App r a = Members '[Console, DB, Log] r => Sem r a
 
-app :: Members '[Console, DB, Log] r => Sem r ()
+app :: Members '[Console, DB, Log] r => Sem r Event
 app = do
   consoleWrite "Yes?"
   name <- consoleRead
   logWrite $ "New user: " <> name <> "."
   dbCreateNextUser name
   consoleWrite "Bye!"
+  return $ User 42 "sts"
 
 type AppIO = IO
 
-runIO :: Sem '[DB, Console, Log, Embed AppIO] () -> AppIO ()
+runIO :: Sem '[DB, Console, Log, Embed AppIO] Event -> AppIO Event
 runIO =
   runM
     .
@@ -144,9 +150,9 @@ runIO =
         DbCreate user -> embed $ addFile dbFileName $ user
         DbRead        -> embed $ map read . lines <$> readFileContents dbFileName)
 mainIO :: IO ()
-mainIO = runIO app
+mainIO = runIO app >>= print
 
-runMock :: Sem '[DB, Console, Log, Embed AppMock] () -> AppMock ()
+runMock :: Sem '[DB, Console, Log, Embed AppMock] Event -> AppMock Event
 runMock =
   runM
     .
@@ -160,7 +166,7 @@ runMock =
       (interpret $ \case
         DbCreate user -> return ()
         DbRead        -> return $ read inMemoryDbRaw)
-appMock :: AppMock ()
+appMock :: AppMock Event
 appMock = runMock app
 mainMock :: IO ()
 mainMock = appMock & print
