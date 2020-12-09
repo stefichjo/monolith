@@ -133,16 +133,16 @@ app = do
   dbCreateNextUser name
   consoleWrite "Bye!"
 
--- REFACTOR generalize: `app`, `withLog`, ...
+-- REFACTOR generalize `runIO` and `buildM` to `run` (hiding `run` from Polysemy)
 
 type AppIO = IO
 
 appIO :: AppIO ()
-appIO = buildIO app
+appIO = runIO app
 
-buildIO :: Sem '[DB, Console, Log, Embed AppIO] a -> AppIO a
-buildIO =
-  build
+runIO :: Sem '[DB, Console, Log, Embed AppIO] a -> AppIO a
+runIO =
+  runM
     .
       (interpret $ \case
         LogWrite msg -> embed $ addFile logFileName msg)
@@ -156,11 +156,11 @@ buildIO =
         DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
 
 appMock :: AppMock ()
-appMock = buildMock app
+appMock = runMock app
 
-buildMock :: Sem '[DB, Console, Log, Embed AppMock] a -> AppMock a
-buildMock =
-  build
+runMock :: Sem '[DB, Console, Log, Embed AppMock] a -> AppMock a
+runMock =
+  runM
     .
       (interpret $ \case
         LogWrite msg -> return ())
