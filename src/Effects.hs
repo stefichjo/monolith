@@ -10,6 +10,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Effects (
   module Polysemy,
@@ -18,7 +19,7 @@ module Effects (
 
 import FileSystem
 import Utils
-import Polysemy hiding (run)
+import Polysemy
 import Data.Function ((&))
 import System.Random (randomIO)
 import qualified Data.IntMap
@@ -136,9 +137,7 @@ app = do
 
 type AppIO = IO
 
-type RunM m a = Sem '[DB, Console, Log, Embed m] a -> m a
-
-runIO :: RunM AppIO ()
+runIO :: Sem '[DB, Console, Log, Embed AppIO] () -> AppIO ()
 runIO =
   runM
     .
@@ -151,13 +150,11 @@ runIO =
     .
       (interpret $ \case
         DbCreate user -> embed $ addFile dbFileName $ user
-        DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
-appIO :: AppIO ()
-appIO = runIO app
+        DbRead        -> embed $ map read . lines <$> readFileContents dbFileName)
 mainIO :: IO ()
-mainIO = appIO
+mainIO = runIO app
 
-runMock :: RunM AppMock ()
+runMock :: Sem '[DB, Console, Log, Embed AppMock] () -> AppMock ()
 runMock =
   runM
     .
@@ -172,27 +169,9 @@ runMock =
         DbCreate user -> return ()
         DbRead        -> return $ read inMemoryDbRaw)
 appMock :: AppMock ()
-appMock = runMock (app :: Members '[DB, Console, Log, Embed AppMock] r => App r ())
+appMock = runMock app
 mainMock :: IO ()
 mainMock = appMock & print
-
-class Monad m => Run m a r where
-  
-  run :: Sem r a -> m a
--- instance Run AppIO () '[DB, Console, Log, Embed AppIO] where
-
---   run = runIO
-instance Run AppMock () '[DB, Console, Log, Embed AppMock] where
-
-  run = runMock
-
--- TODO just for fun: App' instances of App
--- TODO instance Log' (* -> *) where
-
--- instance Log' ("App") where
-
--- TODO type for (* -> *)
--- instance Log' (App r) where
 
 type LogT = Writer String
 instance Log' LogT where
@@ -244,7 +223,6 @@ instance DB' DBMtl where
   dbRead' = DBMtl $ get
 
 -- TODO use DBT and LogT as well
-
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
 
