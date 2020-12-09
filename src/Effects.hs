@@ -52,10 +52,10 @@ class DB' m where
   dbCreate' :: User -> m ()
   dbRead' :: m [User]
 
-  dbCreateNextUser' :: Monad m => String -> m ()
-  dbCreateNextUser' name = do
+  nextUser :: Monad m => UserName -> m User
+  nextUser name = do
     User lastId _ <- maximum <$> dbRead'
-    dbCreate' (User (succ lastId) name)
+    return $ User (succ lastId) name
 
 type AppMock = Identity
 instance Log' AppMock where
@@ -80,8 +80,6 @@ instance DB' IO where
   dbCreate' = addFile dbFileName
   dbRead' = map read . lines <$> readFileContents dbFileName
 
--- TODO User instead of ()
-
 type Event = User
 
 app' :: App' m Event
@@ -89,9 +87,10 @@ app' = do
   consoleWrite' "Yes?"
   name <- consoleRead'
   logWrite' $ "New user: " <> name <> "."
-  dbCreateNextUser' name
+  user <- nextUser name
+  dbCreate' user
   consoleWrite' "Bye!"
-  return $ User 42 "sts"
+  return user
 
 mainMock' :: AppMock Event
 mainMock' = app'
@@ -117,7 +116,7 @@ data DB m a where {
 
   }; makeSem ''DB
 
-dbCreateNextUser :: String -> App r ()
+dbCreateNextUser :: UserName -> App r ()
 dbCreateNextUser name = do
   User lastId  _ <- maximum <$> dbRead
   dbCreate (User (succ lastId) name)
