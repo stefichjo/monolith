@@ -136,35 +136,37 @@ app = do
 -- REFACTOR generalize: `app`, `withLog`, ...
 
 appIO :: IO ()
-appIO = app & buildIO
-    
-buildIO :: Sem '[DB, Console, Log, Embed IO] () -> IO ()
-buildIO = build
-  .
-    (interpret $ \case
+appIO = app
+  &
+    build
+    .
+      (interpret $ \case
         LogWrite msg -> embed $ addFile logFileName msg)
-  . 
-    (interpret $ \case
-      ConsoleWrite line -> embed $ putStrLn line
-      ConsoleRead       -> embed getLine)
-  .
-    (interpret $ \case
-      DbCreate user -> embed $ addFile dbFileName $ user
-      DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
+    . 
+      (interpret $ \case
+        ConsoleWrite line -> embed $ putStrLn line
+        ConsoleRead       -> embed getLine)
+    .
+      (interpret $ \case
+        DbCreate user -> embed $ addFile dbFileName $ user
+        DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
 
--- TODO buildIO :: ?
+appMock :: AppMock ()
+appMock = app
+  &
+    build
+    .
+      (interpret $ \case
+        LogWrite msg -> return ())
+    .
+      (interpret $ \case
+        ConsoleWrite line -> return ()
+        ConsoleRead       -> return consoleConst)
+    .
+      (interpret $ \case
+        DbCreate user -> return ()
+        DbRead        -> return $ read inMemoryDbRaw)
 
-appM :: Monad m => m ()
-appM = app
-  & (interpret $ \case
-      LogWrite msg -> return ())
-  & (interpret $ \case
-      ConsoleWrite line -> return ()
-      ConsoleRead       -> return consoleConst)
-  & (interpret $ \case
-      DbCreate user -> return ()
-      DbRead        -> return $ read inMemoryDbRaw)
-  & build
 
 -- TODO just for fun: App' instances of App
 -- TODO instance Log' (* -> *) where

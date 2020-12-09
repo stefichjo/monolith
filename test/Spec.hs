@@ -30,7 +30,7 @@ spec = do
 
   describe "app builder" $ do
     it "can build an app that adds two numbers together (random and from console)" $ do
-      appM `shouldBe` Identity ()
+      appMock `shouldBe` Identity ()
 
 ok = and [
   okLog,
