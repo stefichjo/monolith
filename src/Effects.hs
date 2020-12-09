@@ -76,13 +76,13 @@ instance DB' IO where
 
 type AppMock = Identity
 instance Log' AppMock where
-  logWrite' msg = pure ()
+  logWrite' msg = return ()
 instance Console' AppMock where
-  consoleRead' = pure consoleConst
-  consoleWrite' msg = pure ()
+  consoleRead' = return consoleConst
+  consoleWrite' msg = return ()
 instance DB' AppMock where
-  dbCreate' user = pure ()
-  dbRead' = pure $ read inMemoryDbRaw
+  dbCreate' user = return ()
+  dbRead' = return $ read inMemoryDbRaw
 
 mainMock :: AppMock ()
 mainMock = app'
