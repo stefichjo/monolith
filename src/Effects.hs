@@ -131,7 +131,7 @@ app = do
   user <- nextUser name
   dbCreate user
   consoleWrite "Bye!"
-  return $ User 42 "sts"
+  return user
 
 type AppIO = IO
 

@@ -28,14 +28,10 @@ spec = do
     it "should append" $ property $
       \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
 
-  describe "app builder" $ do
-    it "can" $ do
-      appMock `shouldBe` Identity (User {userId = 42, userName = "sts"})
-  
   describe "app" $ do
     it "can" $ do
-      True `shouldBe` True
-
+      appMock `shouldBe` Identity (User {userId = 43, userName = "10"})
+  
 
 okApp = and [
 
