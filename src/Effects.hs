@@ -126,7 +126,7 @@ dbCreateNextUser name = do
 
 type App r a = Members '[Console, DB, Log] r => Sem r a
 
-app :: App r ()
+app :: Members '[Console, DB, Log] r => Sem r ()
 app = do
   consoleWrite "Yes?"
   name <- consoleRead
@@ -136,7 +136,9 @@ app = do
 
 type AppIO = IO
 
-runIO :: Sem '[DB, Console, Log, Embed AppIO] () -> AppIO ()
+type RunM m a = Sem '[DB, Console, Log, Embed m] a -> m a
+
+runIO :: RunM AppIO ()
 runIO =
   runM
     .
@@ -155,7 +157,7 @@ appIO = runIO app
 mainIO :: IO ()
 mainIO = appIO
 
-runMock :: Sem '[DB, Console, Log, Embed AppMock] () -> AppMock ()
+runMock :: RunM AppMock ()
 runMock =
   runM
     .
@@ -174,13 +176,13 @@ appMock = runMock (app :: Members '[DB, Console, Log, Embed AppMock] r => App r 
 mainMock :: IO ()
 mainMock = appMock & print
 
-class Monad m => Run m r a where
+class Monad m => Run m a r where
   
   run :: Sem r a -> m a
-instance Run AppIO '[DB, Console, Log, Embed AppIO] () where
+-- instance Run AppIO () '[DB, Console, Log, Embed AppIO] where
 
-  run = runIO
-instance Run AppMock '[DB, Console, Log, Embed AppMock] () where
+--   run = runIO
+instance Run AppMock () '[DB, Console, Log, Embed AppMock] where
 
   run = runMock
 
