@@ -135,10 +135,14 @@ app = do
 
 -- REFACTOR generalize: `app`, `withLog`, ...
 
-appIO :: IO ()
-appIO = app
-  &
-    build
+type AppIO = IO
+
+appIO :: AppIO ()
+appIO = buildIO app
+
+buildIO :: Sem '[DB, Console, Log, Embed AppIO] a -> AppIO a
+buildIO =
+  build
     .
       (interpret $ \case
         LogWrite msg -> embed $ addFile logFileName msg)
@@ -152,9 +156,11 @@ appIO = app
         DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
 
 appMock :: AppMock ()
-appMock = app
-  &
-    build
+appMock = buildMock app
+
+buildMock :: Sem '[DB, Console, Log, Embed AppMock] a -> AppMock a
+buildMock =
+  build
     .
       (interpret $ \case
         LogWrite msg -> return ())
