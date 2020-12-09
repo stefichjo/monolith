@@ -61,6 +61,16 @@ class DB' m where
     User lastId _ <- maximum <$> dbRead'
     dbCreate' (User (succ lastId) name)
 
+type AppMock = Identity
+instance Log' AppMock where
+  logWrite' msg = return ()
+instance Console' AppMock where
+  consoleRead' = return consoleConst
+  consoleWrite' msg = return ()
+instance DB' AppMock where
+  dbCreate' user = return ()
+  dbRead' = return $ read inMemoryDbRaw
+
 type App' m a = (Monad m, Log' m, Console' m, DB' m) => m a
 instance Log' IO where
 
@@ -74,19 +84,6 @@ instance DB' IO where
   dbCreate' = addFile dbFileName
   dbRead' = map read . lines <$> readFileContents dbFileName
 
-type AppMock = Identity
-instance Log' AppMock where
-  logWrite' msg = return ()
-instance Console' AppMock where
-  consoleRead' = return consoleConst
-  consoleWrite' msg = return ()
-instance DB' AppMock where
-  dbCreate' user = return ()
-  dbRead' = return $ read inMemoryDbRaw
-
-mainMock :: AppMock ()
-mainMock = app'
-
 app' :: App' m ()
 app' = do
   consoleWrite' "Yes?"
@@ -94,6 +91,12 @@ app' = do
   logWrite' $ "New user: " <> name <> "."
   dbCreateNextUser' name
   consoleWrite' "Bye!"
+
+mainMock' :: AppMock ()
+mainMock' = app'
+
+mainIO' :: IO ()
+mainIO' = app'
 
 -- Split here: Polysemy
 
@@ -133,16 +136,18 @@ app = do
 -- REFACTOR generalize: `app`, `withLog`, ...
 
 appIO :: IO ()
-appIO = app
-  & (interpret $ \case
-      LogWrite msg -> embed (addFile logFileName msg))
-  & (interpret $ \case
-      ConsoleWrite line -> embed (putStrLn line)
-      ConsoleRead       -> embed getLine)
-  & (interpret $ \case
-      DbCreate user -> embed . addFile dbFileName $ user
-      DbRead -> embed (map read . lines <$> readFileContents dbFileName))
-  & build
+appIO = (app :: App r ())
+  & ((interpret $ \case
+        LogWrite msg -> embed $ addFile logFileName msg) :: WithIO r => With Log r)
+  & ((interpret $ \case
+      ConsoleWrite line -> embed $ putStrLn line
+      ConsoleRead       -> embed getLine) :: WithIO r => With Console r)
+  & ((interpret $ \case
+      DbCreate user -> embed $ addFile dbFileName $ user
+      DbRead -> embed $ map read . lines <$> readFileContents dbFileName) :: WithIO r => With DB r)
+  & (build :: Build IO ())
+
+-- TODO buildIO :: ?
 
 appM :: Monad m => m ()
 appM = app
@@ -234,4 +239,3 @@ instance Console' AppMtl where
 
   consoleRead' = ask
   consoleWrite' = tell
-
