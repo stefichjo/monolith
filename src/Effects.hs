@@ -123,7 +123,7 @@ dbCreateNextUser name = do
   User lastId  _ <- maximum <$> dbRead
   dbCreate (User (succ lastId) name)
 
-type App r a = '[Console, DB, Log] `Members` r => Builder r a
+type App r a = Members '[Console, DB, Log] r => Sem r a
 
 app :: App r ()
 app = do
@@ -138,7 +138,7 @@ app = do
 appIO :: IO ()
 appIO = app & buildIO
     
-buildIO :: Builder '[DB, Console, Log, Embed IO] () -> IO ()
+buildIO :: Sem '[DB, Console, Log, Embed IO] () -> IO ()
 buildIO = build
   .
     (interpret $ \case
