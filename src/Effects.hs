@@ -9,6 +9,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Effects (
   module Polysemy,
@@ -17,7 +18,7 @@ module Effects (
 
 import FileSystem
 import Utils
-import Polysemy
+import Polysemy hiding (run)
 import Data.Function ((&))
 import System.Random (randomIO)
 import qualified Data.IntMap
@@ -133,24 +134,9 @@ app = do
   dbCreateNextUser name
   consoleWrite "Bye!"
 
--- REFACTOR generalize `runIO` and `buildM` to `run` (hiding `run` from Polysemy)
-
 type AppIO = IO
 
-appIO :: AppIO ()
-appIO = runIO app
-
-{-
-Now, generalizing over `runIO` and `runMock` is generalizing over `AppIO` and `AppMock`. Enter type classes, again.
--}
--- TODO Embed m
-class Monad m => Run m where
-
-instance Run AppIO where
-
-instance Run AppMock where
-
-runIO :: Sem '[DB, Console, Log, Embed AppIO] a -> AppIO a
+runIO :: Sem '[DB, Console, Log, Embed AppIO] () -> AppIO ()
 runIO =
   runM
     .
@@ -164,11 +150,12 @@ runIO =
       (interpret $ \case
         DbCreate user -> embed $ addFile dbFileName $ user
         DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
+appIO :: AppIO ()
+appIO = runIO app
+mainIO :: IO ()
+mainIO = appIO
 
-appMock :: AppMock ()
-appMock = runMock app
-
-runMock :: Sem '[DB, Console, Log, Embed AppMock] a -> AppMock a
+runMock :: Sem '[DB, Console, Log, Embed AppMock] () -> AppMock ()
 runMock =
   runM
     .
@@ -182,6 +169,20 @@ runMock =
       (interpret $ \case
         DbCreate user -> return ()
         DbRead        -> return $ read inMemoryDbRaw)
+appMock :: AppMock ()
+appMock = runMock (app :: Members '[DB, Console, Log, Embed AppMock] r => App r ())
+mainMock :: IO ()
+mainMock = appMock & print
+
+class Monad m => Run m r a where
+  
+  run :: Sem r a -> m a
+instance Run AppIO '[DB, Console, Log, Embed AppIO] () where
+
+  run = runIO
+instance Run AppMock '[DB, Console, Log, Embed AppMock] () where
+
+  run = runMock
 
 -- TODO just for fun: App' instances of App
 -- TODO instance Log' (* -> *) where
