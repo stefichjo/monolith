@@ -47,17 +47,10 @@ data User =
 class Log' m where
 
   logWrite' :: String -> m ()
-instance Log' IO where
-
-  logWrite' = addFile logFileName
 class Console' m where
 
   consoleRead' :: m String
   consoleWrite' :: String -> m ()
-instance Console' IO where
-
-  consoleRead' = getLine
-  consoleWrite' = putStrLn
 class DB' m where
 
   dbCreate' :: User -> m ()
@@ -67,12 +60,32 @@ class DB' m where
   dbCreateNextUser' name = do
     User lastId _ <- maximum <$> dbRead'
     dbCreate' (User (succ lastId) name)
+
+type App' m a = (Monad m, Log' m, Console' m, DB' m) => m a
+instance Log' IO where
+
+  logWrite' = addFile logFileName
+instance Console' IO where
+
+  consoleRead' = getLine
+  consoleWrite' = putStrLn
 instance DB' IO where
 
   dbCreate' = addFile dbFileName
   dbRead' = map read . lines <$> readFileContents dbFileName
 
-type App' m a = (Monad m, Log' m, Console' m, DB' m) => m a
+type AppMock = Identity
+instance Log' AppMock where
+  logWrite' msg = pure ()
+instance Console' AppMock where
+  consoleRead' = pure consoleConst
+  consoleWrite' msg = pure ()
+instance DB' AppMock where
+  dbCreate' user = pure ()
+  dbRead' = pure $ read inMemoryDbRaw
+
+mainMock :: AppMock ()
+mainMock = app'
 
 app' :: App' m ()
 app' = do
@@ -134,16 +147,14 @@ appIO = app
 appM :: Monad m => m ()
 appM = app
   & (interpret $ \case
-      LogWrite msg -> pure ())
+      LogWrite msg -> return ())
   & (interpret $ \case
-      ConsoleWrite line -> pure ()
-      ConsoleRead       -> pure consoleConst)
+      ConsoleWrite line -> return ()
+      ConsoleRead       -> return consoleConst)
   & (interpret $ \case
-      DbCreate user -> pure ()
-      DbRead        -> pure inMemoryDB)
+      DbCreate user -> return ()
+      DbRead        -> return $ read inMemoryDbRaw)
   & build
-
-inMemoryDB = read inMemoryDbRaw :: [User]
 
 -- TODO just for fun: App' instances of App
 -- TODO instance Log' (* -> *) where
@@ -203,14 +214,6 @@ instance DB' DBMtl where
   dbRead' = DBMtl $ get
 
 -- TODO use DBT and LogT as well
-type AppT_ = (StateT [User]) ConsoleT
-newtype AppMtl_ a =
-
-  AppMtl_ {
-    runAppMtl_ :: AppT_ a }
-  deriving (
-    Functor, Applicative, Monad,
-    MonadReader String, MonadWriter String, MonadState [User])
 
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
@@ -232,15 +235,3 @@ instance Console' AppMtl where
   consoleRead' = ask
   consoleWrite' = tell
 
-type AppMock = Identity
-instance Log' AppMock where
-  logWrite' msg = return ()
-instance Console' AppMock where
-  consoleRead' = return consoleConst
-  consoleWrite' msg = return ()
-instance DB' AppMock where
-  dbCreate' user = return ()
-  dbRead' = return inMemoryDB
-
-mainIdentity :: AppMock ()
-mainIdentity = app'

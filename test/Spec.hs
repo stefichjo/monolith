@@ -134,6 +134,7 @@ okLanguage = and [
 
   True]
 
+inMemoryDB = read inMemoryDbRaw
 
 {-
 Tagles Final:
