@@ -52,8 +52,8 @@ class DB' m where
   dbCreate' :: User -> m ()
   dbRead' :: m [User]
 
-  nextUser :: Monad m => UserName -> m User
-  nextUser name = do
+  nextUser' :: Monad m => UserName -> m User
+  nextUser' name = do
     User lastId _ <- maximum <$> dbRead'
     return $ User (succ lastId) name
 
@@ -87,7 +87,7 @@ app' = do
   consoleWrite' "Yes?"
   name <- consoleRead'
   logWrite' $ "New user: " <> name <> "."
-  user <- nextUser name
+  user <- nextUser' name
   dbCreate' user
   consoleWrite' "Bye!"
   return user
@@ -116,10 +116,10 @@ data DB m a where {
 
   }; makeSem ''DB
 
-dbCreateNextUser :: UserName -> App r ()
-dbCreateNextUser name = do
+nextUser :: UserName -> App r User
+nextUser name = do
   User lastId  _ <- maximum <$> dbRead
-  dbCreate (User (succ lastId) name)
+  return $ User (succ lastId) name
 
 type App r a = Members '[Console, DB, Log] r => Sem r a
 
@@ -128,7 +128,8 @@ app = do
   consoleWrite "Yes?"
   name <- consoleRead
   logWrite $ "New user: " <> name <> "."
-  dbCreateNextUser name
+  user <- nextUser name
+  dbCreate user
   consoleWrite "Bye!"
   return $ User 42 "sts"
 

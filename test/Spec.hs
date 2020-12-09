@@ -29,14 +29,33 @@ spec = do
       \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
 
   describe "app builder" $ do
-    it "can build an app that adds two numbers together (random and from console)" $ do
-      appMock `shouldBe` Identity ()
+    it "can" $ do
+      appMock `shouldBe` Identity (User {userId = 42, userName = "sts"})
+  
+  describe "app" $ do
+    it "can" $ do
+      True `shouldBe` True
+
+
+okApp = and [
+
+    -- AppMtl ()
+    runApp app' inMemoryDB "sts"
+    ==
+    (,)
+      (User {userId = 42, userName = "sts"}, (inMemoryDB <> [User 42 "sts"]))
+      "Yes?New user: Fizz.Bye!",
+      
+  True]
+
+runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
+
 
 ok = and [
   okLog,
   okDB,
   okConsole,
-  okApp,
+  -- okApp,
   okLanguage,
   True]
 okLog = and [
@@ -108,18 +127,6 @@ okConsole = and [
   
   runConsoleT = runReader . runWriterT
   runConsole = runConsoleT . runConsoleMtl
-okApp = and [
-
-    -- AppMtl ()
-    runApp app' inMemoryDB "Fizz"
-    ==
-    (,)
-      ((), (inMemoryDB <> [User 43 "Fizz"]))
-      "Yes?New user: Fizz.Bye!",
-      
-  True] where
-
-  runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
 okLanguage = and [
 
     -- UserId
