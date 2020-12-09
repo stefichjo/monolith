@@ -141,9 +141,15 @@ Tagles Final:
 https://serokell.io/blog/tagless-final
 https://jproyo.github.io/posts/2019-03-17-tagless-final-haskell.html
 
-Free Monads:
-https://www.youtube.com/watch?v=gUPuWHAt6SA&t=57s
-
 Polysemy:
-https://www.youtube.com/watch?v=eth4y015BCU
+https://hackage.haskell.org/package/polysemy
+
+Clean Architecture:
+https://github.com/thma/PolysemyCleanArchitecture
 -}
+
+-- TODO Event instead of ()
+-- REFACTOR JSON
+
+-- TODO move to submodules Log'/Log
+-- TODO use DBT and LogT as well

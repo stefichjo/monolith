@@ -40,12 +40,6 @@ data User =
   deriving (
     Eq, Ord, Show, Read)
 
--- TODO Event instead of ()
--- REFACTOR JSON
-
--- TODO move to submodules Log'/Log
--- Split here: Tagless Final
-
 class Log' m where
 
   logWrite' :: String -> m ()
@@ -99,8 +93,6 @@ mainMock' = app'
 
 mainIO' :: IO ()
 mainIO' = app'
-
--- Split here: Polysemy
 
 data Log m a where {
 
@@ -222,7 +214,6 @@ instance DB' DBMtl where
   dbCreate' user = DBMtl $ dbCreate' user
   dbRead' = DBMtl $ get
 
--- TODO use DBT and LogT as well
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
 
