@@ -136,16 +136,21 @@ app = do
 -- REFACTOR generalize: `app`, `withLog`, ...
 
 appIO :: IO ()
-appIO = (app :: App r ())
-  & ((interpret $ \case
-        LogWrite msg -> embed $ addFile logFileName msg) :: WithIO r => With Log r)
-  & ((interpret $ \case
+appIO = app & buildIO
+    
+buildIO :: Builder '[DB, Console, Log, Embed IO] () -> IO ()
+buildIO = build
+  .
+    (interpret $ \case
+        LogWrite msg -> embed $ addFile logFileName msg)
+  . 
+    (interpret $ \case
       ConsoleWrite line -> embed $ putStrLn line
-      ConsoleRead       -> embed getLine) :: WithIO r => With Console r)
-  & ((interpret $ \case
+      ConsoleRead       -> embed getLine)
+  .
+    (interpret $ \case
       DbCreate user -> embed $ addFile dbFileName $ user
-      DbRead -> embed $ map read . lines <$> readFileContents dbFileName) :: WithIO r => With DB r)
-  & (build :: Build IO ())
+      DbRead -> embed $ map read . lines <$> readFileContents dbFileName)
 
 -- TODO buildIO :: ?
 
