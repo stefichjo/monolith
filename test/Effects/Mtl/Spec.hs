@@ -19,7 +19,7 @@ specMtl = do
 
   describe "app" $ do
     it "can" $ do
-      (app :: AppMock Event) `shouldBe` return (User {userId = 43, userName = "10"})
+      (app :: AppMock Event) `shouldBe` return (User {userId = 43, userName = consoleMock})
 
   describe "ok" $ do
     it "should be ok" $ do
@@ -31,7 +31,7 @@ specMtl = do
       `shouldBe`
       ((,)
         (User {userId = 43, userName = consoleMock}, (dbMock <> [User 43 consoleMock]))
-        "Yes?New user: 10.Bye!")
+        "Yes?New user: Fizz.Bye!")
 
 type Det = ((User, [User]), String)
 
