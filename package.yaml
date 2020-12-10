@@ -58,6 +58,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - monolith
+    - polysemy
     - mtl
     - hspec
     - QuickCheck

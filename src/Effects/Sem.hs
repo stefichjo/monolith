@@ -32,7 +32,7 @@ nextUser name = do
 
 type App r a = Members '[Console, DB, Log] r => Sem r a
 
-app :: Members '[Console, DB, Log] r => Sem r Event
+app :: App r Event
 app = do
   consoleWrite "Yes?"
   name <- consoleRead
@@ -60,24 +60,3 @@ runIO =
         ConsoleRead       -> embed getLine)
 mainIO :: IO ()
 mainIO = runIO app >>= print
-
-runMock :: Sem '[Console, DB, Log, Embed AppMock] Event -> AppMock Event
-runMock =
-  runM
-    .
-      (interpret $ \case
-        LogWrite msg -> return ())
-    .
-      (interpret $ \case
-        DbCreate user -> return ()
-        DbRead        -> return $ read inMemoryDbRaw)
-    .
-      (interpret $ \case
-        ConsoleWrite line -> return ()
-        ConsoleRead       -> return consoleConst)
-appMock :: AppMock Event
-appMock = runMock app
-mainMock :: IO ()
-mainMock = print appMock
-
--- TODO mtl-like app instance
