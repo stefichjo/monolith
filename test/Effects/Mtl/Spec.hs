@@ -1,5 +1,6 @@
 module Effects.Mtl.Spec where
 import Effects.Mtl
+import Effects.Utils
 
 import Test.Hspec
 import Test.QuickCheck

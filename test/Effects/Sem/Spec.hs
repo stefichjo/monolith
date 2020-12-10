@@ -1,5 +1,6 @@
 module Effects.Sem.Spec where
 import Effects.Sem
+import Effects.Utils
 
 import Test.Hspec
 import Test.QuickCheck

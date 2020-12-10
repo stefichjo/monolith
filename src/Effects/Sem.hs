@@ -4,6 +4,7 @@
 module Effects.Sem where
 
 import Utils
+import Effects.Utils
 import FileSystem
 import Polysemy
 import Data.Function ((&))

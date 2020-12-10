@@ -28,6 +28,7 @@ library:
     - Lib
     - Utils
     - Effects
+    - Effects.Utils
     - Effects.Mtl
     - Effects.Sem
   dependencies:
