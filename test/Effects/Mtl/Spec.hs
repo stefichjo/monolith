@@ -9,21 +9,15 @@ import Utils
 import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
-import Control.Monad.Identity
-import Data.Function
 
 inMemoryDB = read inMemoryDbRaw
 
 specMtl :: Spec
 specMtl = do
 
-  describe "test" $ do
-    it "should work" $ do
-      True `shouldBe` True
-
   describe "ok" $ do
     it "should be ok" $ do
-      ok `shouldBe` True
+      and [okLog, okDB, okConsole] `shouldBe` True
 
 okApp = and [
 
@@ -39,12 +33,6 @@ okApp = and [
 runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
 
 
-ok = and [
-  okLog,
-  okDB,
-  okConsole,
-  -- okApp,
-  True]
 okLog = and [
 
     -- LogT ()

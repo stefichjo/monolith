@@ -19,10 +19,6 @@ spec = do
     it "should append" $ property $
       \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
 
-  describe "app" $ do
-    it "can" $ do
-      appMock `shouldBe` return (User {userId = 43, userName = "10"})
-  
 {-
 Tagles Final:
 https://serokell.io/blog/tagless-final
