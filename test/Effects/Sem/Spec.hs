@@ -28,7 +28,7 @@ runMock =
     .
       (interpret $ \case
         DbCreate user -> return ()
-        DbRead        -> return $ read inMemoryDbRaw)
+        DbRead        -> return $ inMemoryDB)
     .
       (interpret $ \case
         ConsoleWrite line -> return ()

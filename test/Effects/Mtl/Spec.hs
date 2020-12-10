@@ -14,8 +14,6 @@ import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
 
-inMemoryDB = read inMemoryDbRaw
-
 specMtl :: Spec
 specMtl = do
 
@@ -116,7 +114,7 @@ instance Console AppMock where
   consoleWrite msg = return ()
 instance DB AppMock where
   dbCreate user = return ()
-  dbRead = return $ read inMemoryDbRaw
+  dbRead = return inMemoryDB
 instance Log AppMock where
   logWrite msg = return ()
 
