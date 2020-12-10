@@ -16,9 +16,9 @@ inMemoryDB = read inMemoryDbRaw
 specMtl :: Spec
 specMtl = do
 
-  -- describe "app" $ do
-  --   it "can" $ do
-  --     app `shouldBe` return (User {userId = 43, userName = "10"})
+  describe "app" $ do
+    it "can" $ do
+      (app :: AppMock Event) `shouldBe` return (User {userId = 43, userName = "10"})
 
   describe "ok" $ do
     it "should be ok" $ do
