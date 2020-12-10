@@ -24,20 +24,22 @@ specMtl = do
   describe "ok" $ do
     it "should be ok" $ do
       and [okLog, okDB, okConsole] `shouldBe` True
+  
+  describe "app" $ do
+    it "can also" $ do
+      (runApp (app :: AppMtl Event) dbMock consoleMock)
+      `shouldBe`
+      ((,)
+        (User {userId = 43, userName = consoleMock}, (dbMock <> [User 43 consoleMock]))
+        "Yes?New user: 10.Bye!")
 
-okApp = and [
+type Det = ((User, [User]), String)
 
-    -- AppMtl ()
-    runApp app dbMock "sts"
-    ==
-    (,)
-      (User {userId = 42, userName = "sts"}, (dbMock <> [User 42 "sts"]))
-      "Yes?New user: Fizz.Bye!",
-      
-  True]
+-- det :: Det -> Det
+det ((user, db), log) = db
 
-runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
-
+appT = runAppMtl app
+runApp app = runReader . runWriterT . runStateT appT
 
 okLog = and [
 
