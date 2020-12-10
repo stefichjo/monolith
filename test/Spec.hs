@@ -2,9 +2,10 @@ module Main where
 
 import Test.Hspec
 import Test.QuickCheck
+
+import Utils.Spec
 import Effects.Spec
 
-import Effects
 import Utils
 
 main :: IO ()
@@ -15,9 +16,7 @@ spec = do
 
   specEffects
 
-  describe "append" $ do
-    it "should append" $ property $
-      \x -> append x "Hi" `shouldBe` "Hi" <> [x]      
+  specUtils   
 
 {-
 Tagles Final:
@@ -34,9 +33,7 @@ Events:
 https://blog.jayway.com/2013/06/20/dont-publish-domain-events-return-them/
 -}
 
--- TODO Event instead of ()
 -- REFACTOR JSON
 
--- TODO move to submodules Log'/Log
 -- TODO use DBT and LogT as well
 
