@@ -5,6 +5,7 @@
 module Utils where
 
 import Polysemy
+import Control.Monad.Identity
 
 append :: a -> [a] -> [a]
 append = (flip (<>)) . pure
@@ -37,3 +38,7 @@ data User =
   }
   deriving (
     Eq, Ord, Show, Read)
+
+type Event = User
+
+type AppMock = Identity

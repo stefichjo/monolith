@@ -26,7 +26,6 @@ class DB' m where
     User lastId _ <- maximum <$> dbRead'
     return $ User (succ lastId) name
 
-type AppMock = Identity
 instance Log' AppMock where
   logWrite' msg = return ()
 instance Console' AppMock where
@@ -48,8 +47,6 @@ instance DB' IO where
 
   dbCreate' = addFile dbFileName
   dbRead' = map read . lines <$> readFileContents dbFileName
-
-type Event = User
 
 app' :: App' m Event
 app' = do
