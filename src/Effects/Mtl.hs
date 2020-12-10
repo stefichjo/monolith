@@ -26,7 +26,6 @@ class Log m where
 
   logWrite :: String -> m ()
 
-type App m a = (Console m, DB m, Log m, Monad m) => m a
 instance Console IO where
 
   consoleRead = getLine
@@ -39,6 +38,7 @@ instance Log IO where
 
   logWrite = addFile logFileName
 
+type App m a = (Console m, DB m, Log m, Monad m) => m a
 app :: App m Event
 app = do
   consoleWrite "Yes?"

@@ -17,7 +17,7 @@ specSem = do
 
   describe "app" $ do
     it "can" $ do
-      runMock app `shouldBe` return (User {userId = 43, userName = consoleMock})
+      runMock app `shouldBe` return (User {userId = succ lastUserIdMock, userName = consoleMock})
 
 runMock :: Sem '[Console, DB, Log, Embed AppMock] Event -> AppMock Event
 runMock =

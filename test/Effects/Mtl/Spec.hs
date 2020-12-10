@@ -19,14 +19,14 @@ specMtl = do
 
   describe "sem app" $ do
     it "can" $ do
-      (app :: AppMock Event) `shouldBe` return (User {userId = 43, userName = consoleMock})
+      (app :: AppMock Event) `shouldBe` return (User {userId = succ lastUserIdMock, userName = consoleMock})
 
   describe "mtl app" $ do
     it "can" $ do
         runApp (app :: AppMtl Event) dbMock consoleMock
       `shouldBe`
         (,)
-          (User {userId = 43, userName = consoleMock}, (dbMock <> [User 43 consoleMock]))
+          (User {userId = succ lastUserIdMock, userName = consoleMock}, (dbMock <> [User (succ lastUserIdMock) consoleMock]))
           "Yes?New user: Fizz.Bye!"
 
   describe "ok" $ do
@@ -35,6 +35,9 @@ specMtl = do
   
 appT = runAppMtl app
 runApp app = runReader . runWriterT . runStateT appT
+
+-- runMock :: AppT Event -> AppMock Event
+-- runMock app = (runReader $ runWriterT $ runStateT app dbMock) consoleMock
 
 okLog = and [
 
