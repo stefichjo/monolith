@@ -26,3 +26,14 @@ inMemoryDbRaw = "[User {userId = 42, userName = \"Bar\"},User {userId = 23, user
 -- type Build m a = Monad m => Builder '[Embed m] a -> m a
 -- build :: Monad m => Sem '[Embed m] a -> m a
 -- build = runM
+
+type UserId = Int
+type UserName = String
+data User =
+  
+  User {
+    userId :: UserId,
+    userName :: UserName
+  }
+  deriving (
+    Eq, Ord, Show, Read)

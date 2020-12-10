@@ -1,11 +1,10 @@
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
+{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
+
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE TemplateHaskell, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -14,6 +13,7 @@
 
 module Effects (
   module Polysemy,
+  module Effects.Mtl,
   module Effects
 ) where
 
@@ -24,79 +24,11 @@ import Data.Function ((&))
 import System.Random (randomIO)
 import qualified Data.IntMap
 
+import Effects.Mtl
 import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
 import Control.Monad.Identity
-
-type UserId = Int
-type UserName = String
-data User =
-  
-  User {
-    userId :: UserId,
-    userName :: UserName
-  }
-  deriving (
-    Eq, Ord, Show, Read)
-
-class Log' m where
-
-  logWrite' :: String -> m ()
-class Console' m where
-
-  consoleRead' :: m String
-  consoleWrite' :: String -> m ()
-class DB' m where
-
-  dbCreate' :: User -> m ()
-  dbRead' :: m [User]
-
-  nextUser' :: Monad m => UserName -> m User
-  nextUser' name = do
-    User lastId _ <- maximum <$> dbRead'
-    return $ User (succ lastId) name
-
-type AppMock = Identity
-instance Log' AppMock where
-  logWrite' msg = return ()
-instance Console' AppMock where
-  consoleRead' = return consoleConst
-  consoleWrite' msg = return ()
-instance DB' AppMock where
-  dbCreate' user = return ()
-  dbRead' = return $ read inMemoryDbRaw
-
-type App' m a = (Monad m, Log' m, Console' m, DB' m) => m a
-instance Log' IO where
-
-  logWrite' = addFile logFileName
-instance Console' IO where
-
-  consoleRead' = getLine
-  consoleWrite' = putStrLn
-instance DB' IO where
-
-  dbCreate' = addFile dbFileName
-  dbRead' = map read . lines <$> readFileContents dbFileName
-
-type Event = User
-
-app' :: App' m Event
-app' = do
-  consoleWrite' "Yes?"
-  name <- consoleRead'
-  logWrite' $ "New user: " <> name <> "."
-  user <- nextUser' name
-  dbCreate' user
-  consoleWrite' "Bye!"
-  return user
-
-mainMock' :: AppMock Event
-mainMock' = app'
-
-mainIO' :: IO ()
-mainIO' = app' >>= print
 
 data Log m a where {
 
