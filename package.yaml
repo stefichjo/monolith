@@ -28,6 +28,8 @@ library:
     - Lib
     - Utils
     - Effects
+    - Effects.Mtl
+    - Effects.Sem
   dependencies:
     - mtl
     - polysemy

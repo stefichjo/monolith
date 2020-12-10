@@ -14,9 +14,9 @@ main = hspec spec
 spec :: Spec
 spec = do
 
-  specEffects
-
   specUtils   
+
+  specEffects
 
 {-
 Tagles Final:

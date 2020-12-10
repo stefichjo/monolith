@@ -1,9 +1,9 @@
 module Effects.Mtl.Spec where
+import Effects.Mtl
 
 import Test.Hspec
 import Test.QuickCheck
 
-import Effects
 import Utils
 
 import Control.Monad.Reader
@@ -22,7 +22,7 @@ specMtl = do
 okApp = and [
 
     -- AppMtl ()
-    runApp app' inMemoryDB "sts"
+    runApp app inMemoryDB "sts"
     ==
     (,)
       (User {userId = 42, userName = "sts"}, (inMemoryDB <> [User 42 "sts"]))
@@ -36,12 +36,12 @@ runApp app db = runReader (runWriterT (runStateT (runAppMtl app) db))
 okLog = and [
 
     -- LogT ()
-    runLogT (logWrite' "Hi!")
+    runLogT (logWrite "Hi!")
     ==
     ((), "Hi!"),
     
     -- LogMtl ()
-    runLog (logWrite' "Hi!")
+    runLog (logWrite "Hi!")
     ==
     ((), "Hi!"),
     
@@ -52,22 +52,22 @@ okLog = and [
 okDB = and [
 
   -- DBT ()
-  runDBT (dbCreate' (last inMemoryDB)) (init inMemoryDB)
+  runDBT (dbCreate (last inMemoryDB)) (init inMemoryDB)
   ==
   ((), inMemoryDB),
   
   -- DBT [User]
-  runDBT dbRead' inMemoryDB
+  runDBT dbRead inMemoryDB
   ==
   (inMemoryDB, inMemoryDB),
 
   -- DBMtl ()
-  runDB (dbCreate' (last inMemoryDB)) (init inMemoryDB)
+  runDB (dbCreate (last inMemoryDB)) (init inMemoryDB)
   ==
   ((), inMemoryDB),
   
   -- DBMtl [User]
-  runDB dbRead' inMemoryDB
+  runDB dbRead inMemoryDB
   ==
   (inMemoryDB, inMemoryDB),
 
@@ -78,23 +78,23 @@ okDB = and [
 okConsole = and [
 
   -- ConsoleT String
-  runConsoleT (consoleRead') "Hi!"
+  runConsoleT (consoleRead) "Hi!"
   ==
   ("Hi!", ""),
   
   -- ConsoleT ()
-  runConsoleT (consoleWrite' "Hi!") ""
+  runConsoleT (consoleWrite "Hi!") ""
   ==
   ((), "Hi!"),
   
   
   -- ConsoleMtl String
-  runConsole (consoleRead') "Hi!"
+  runConsole (consoleRead) "Hi!"
   ==
   ("Hi!", ""),
 
   -- ConsoleMtl ()
-  runConsole (consoleWrite' "Hi!") ""
+  runConsole (consoleWrite "Hi!") ""
   ==
   ((), "Hi!"),
   

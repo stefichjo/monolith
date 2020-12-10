@@ -1,10 +1,10 @@
 module Effects.Sem.Spec where
+import Effects.Sem
 
 import Test.Hspec
 import Test.QuickCheck
 
 import Utils
-import Effects
 
 specSem :: Spec
 specSem = do
