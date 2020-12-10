@@ -3,6 +3,7 @@
 module Effects.Mtl.Spec where
 import Effects.Mtl
 import Effects.Utils
+import Effects.Fixtures
 
 import Test.Hspec
 import Test.QuickCheck
@@ -118,9 +119,6 @@ instance DB AppMock where
   dbRead = return $ read inMemoryDbRaw
 instance Log AppMock where
   logWrite msg = return ()
-
-mainMock :: AppMock Event
-mainMock = app
 
 type ConsoleT = WriterT String (Reader String)
 instance Console ConsoleT where

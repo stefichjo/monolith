@@ -4,6 +4,7 @@
 module Effects.Sem.Spec where
 import Effects.Sem
 import Effects.Utils
+import Effects.Fixtures
 
 import Test.Hspec
 import Test.QuickCheck
@@ -34,7 +35,5 @@ runMock =
         ConsoleRead       -> return consoleConst)
 appMock :: AppMock Event
 appMock = runMock app
-mainMock :: IO ()
-mainMock = print appMock
 
 -- TODO mtl-like app instance
