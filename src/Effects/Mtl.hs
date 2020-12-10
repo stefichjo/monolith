@@ -1,20 +1,15 @@
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving #-}
-
 module Effects.Mtl where
+import Effects.Utils
 
 import FileSystem
-import Effects.Utils
-import Utils
+import Utils (append)
 
 import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
-import Control.Monad.Identity
 
-class Log m where
-
-  logWrite :: String -> m ()
 class Console m where
 
   consoleRead :: m String
@@ -28,20 +23,20 @@ class DB m where
   nextUser name = do
     User lastId _ <- maximum <$> dbRead
     return $ User (succ lastId) name
+class Log m where
 
-instance Log AppMock where
-  logWrite msg = return ()
+  logWrite :: String -> m ()
+
 instance Console AppMock where
   consoleRead = return consoleConst
   consoleWrite msg = return ()
 instance DB AppMock where
   dbCreate user = return ()
   dbRead = return $ read inMemoryDbRaw
+instance Log AppMock where
+  logWrite msg = return ()
 
-type App m a = (Monad m, Log m, Console m, DB m) => m a
-instance Log IO where
-
-  logWrite = addFile logFileName
+type App m a = (Console m, DB m, Log m, Monad m) => m a
 instance Console IO where
 
   consoleRead = getLine
@@ -50,6 +45,9 @@ instance DB IO where
 
   dbCreate = addFile dbFileName
   dbRead = map read . lines <$> readFileContents dbFileName
+instance Log IO where
+
+  logWrite = addFile logFileName
 
 app :: App m Event
 app = do
@@ -66,23 +64,6 @@ mainMock = app
 
 mainIO :: IO ()
 mainIO = app >>= print
-
-
-
-type LogT = Writer String
-instance Log LogT where
-
-  logWrite = tell
-newtype LogMtl a =
-  
-  LogMtl {
-    runLogMtl :: LogT a }
-  deriving (
-    Functor, Applicative, Monad,
-    MonadWriter String)
-instance Log LogMtl where
-
-  logWrite msg = LogMtl $ logWrite msg
 
 type ConsoleT = WriterT String (Reader String)
 instance Console ConsoleT where
@@ -117,6 +98,21 @@ instance DB DBMtl where
 
   dbCreate user = DBMtl $ dbCreate user
   dbRead = DBMtl $ get
+
+type LogT = Writer String
+instance Log LogT where
+
+  logWrite = tell
+newtype LogMtl a =
+  
+  LogMtl {
+    runLogMtl :: LogT a }
+  deriving (
+    Functor, Applicative, Monad,
+    MonadWriter String)
+instance Log LogMtl where
+
+  logWrite msg = LogMtl $ logWrite msg
 
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =

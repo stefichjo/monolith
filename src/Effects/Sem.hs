@@ -2,18 +2,12 @@
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.Sem where
-
-import Utils
 import Effects.Utils
+
 import FileSystem
 import Polysemy
 import Data.Function ((&))
 
-data Log m a where {
-
-    LogWrite :: String -> Log m ();
-  
-  }; makeSem ''Log
 data Console m a where {
 
     ConsoleWrite :: String -> Console m ();
@@ -26,6 +20,11 @@ data DB m a where {
     DbRead :: DB m [User];
 
   }; makeSem ''DB
+data Log m a where {
+
+    LogWrite :: String -> Log m ();
+  
+  }; makeSem ''Log
 
 nextUser :: UserName -> App r User
 nextUser name = do
@@ -46,24 +45,24 @@ app = do
 
 type AppIO = IO
 
-runIO :: Sem '[DB, Console, Log, Embed AppIO] Event -> AppIO Event
+runIO :: Sem '[Console, DB, Log, Embed AppIO] Event -> AppIO Event
 runIO =
   runM
     .
       (interpret $ \case
         LogWrite msg -> embed $ addFile logFileName msg)
-    . 
-      (interpret $ \case
-        ConsoleWrite line -> embed $ putStrLn line
-        ConsoleRead       -> embed getLine)
     .
       (interpret $ \case
         DbCreate user -> embed $ addFile dbFileName $ user
         DbRead        -> embed $ map read . lines <$> readFileContents dbFileName)
+    . 
+      (interpret $ \case
+        ConsoleWrite line -> embed $ putStrLn line
+        ConsoleRead       -> embed getLine)
 mainIO :: IO ()
 mainIO = runIO app >>= print
 
--- runMock :: Sem '[DB, Console, Log, Embed AppMock] Event -> AppMock Event
+runMock :: Sem '[Console, DB, Log, Embed AppMock] Event -> AppMock Event
 runMock =
   runM
     .
@@ -71,13 +70,15 @@ runMock =
         LogWrite msg -> return ())
     .
       (interpret $ \case
-        ConsoleWrite line -> return ()
-        ConsoleRead       -> return consoleConst)
-    .
-      (interpret $ \case
         DbCreate user -> return ()
         DbRead        -> return $ read inMemoryDbRaw)
+    .
+      (interpret $ \case
+        ConsoleWrite line -> return ()
+        ConsoleRead       -> return consoleConst)
 appMock :: AppMock Event
 appMock = runMock app
 mainMock :: IO ()
 mainMock = appMock & print
+
+-- TODO mtl-like app instance
