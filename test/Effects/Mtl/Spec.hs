@@ -28,10 +28,10 @@ specMtl = do
 okApp = and [
 
     -- AppMtl ()
-    runApp app inMemoryDB "sts"
+    runApp app dbMock "sts"
     ==
     (,)
-      (User {userId = 42, userName = "sts"}, (inMemoryDB <> [User 42 "sts"]))
+      (User {userId = 42, userName = "sts"}, (dbMock <> [User 42 "sts"]))
       "Yes?New user: Fizz.Bye!",
       
   True]
@@ -58,24 +58,24 @@ okLog = and [
 okDB = and [
 
   -- DBT ()
-  runDBT (dbCreate (last inMemoryDB)) (init inMemoryDB)
+  runDBT (dbCreate (last dbMock)) (init dbMock)
   ==
-  ((), inMemoryDB),
+  ((), dbMock),
   
   -- DBT [User]
-  runDBT dbRead inMemoryDB
+  runDBT dbRead dbMock
   ==
-  (inMemoryDB, inMemoryDB),
+  (dbMock, dbMock),
 
   -- DBMtl ()
-  runDB (dbCreate (last inMemoryDB)) (init inMemoryDB)
+  runDB (dbCreate (last dbMock)) (init dbMock)
   ==
-  ((), inMemoryDB),
+  ((), dbMock),
   
   -- DBMtl [User]
-  runDB dbRead inMemoryDB
+  runDB dbRead dbMock
   ==
-  (inMemoryDB, inMemoryDB),
+  (dbMock, dbMock),
 
   True] where
 
@@ -110,11 +110,11 @@ okConsole = and [
   runConsole = runConsoleT . runConsoleMtl
 
 instance Console AppMock where
-  consoleRead = return consoleConst
+  consoleRead = return consoleMock
   consoleWrite msg = return ()
 instance DB AppMock where
   dbCreate user = return ()
-  dbRead = return inMemoryDB
+  dbRead = return dbMock
 instance Log AppMock where
   logWrite msg = return ()
 

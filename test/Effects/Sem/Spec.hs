@@ -28,11 +28,11 @@ runMock =
     .
       (interpret $ \case
         DbCreate user -> return ()
-        DbRead        -> return $ inMemoryDB)
+        DbRead        -> return $ dbMock)
     .
       (interpret $ \case
         ConsoleWrite line -> return ()
-        ConsoleRead       -> return consoleConst)
+        ConsoleRead       -> return consoleMock)
 appMock :: AppMock Event
 appMock = runMock app
 

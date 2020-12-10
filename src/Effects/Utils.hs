@@ -4,9 +4,6 @@
 
 module Effects.Utils where
 
-import Polysemy
-import Control.Monad.Identity
-
 -- TODO Config.hs
 
 logFileName = "log" :: FilePath
@@ -18,6 +15,8 @@ dbFileName = "db" :: FilePath
 -- type Build m a = Monad m => Builder '[Embed m] a -> m a
 -- build :: Monad m => Sem '[Embed m] a -> m a
 -- build = runM
+
+-- MODEL
 
 type UserId = Int
 type UserName = String
@@ -32,4 +31,3 @@ data User =
 
 type Event = User
 
-type AppMock = Identity

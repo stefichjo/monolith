@@ -1,7 +1,10 @@
 module Effects.Fixtures where
-
 import Effects.Utils
 
-consoleConst = "10" :: UserName
+import Control.Monad.Identity
 
-inMemoryDB = [User {userId = 42, userName = "Bar"},User {userId = 23, userName = "Foo"}] :: [User]
+consoleMock = "10" :: UserName
+
+dbMock = [User {userId = 42, userName = "Bar"},User {userId = 23, userName = "Foo"}] :: [User]
+
+type AppMock = Identity
