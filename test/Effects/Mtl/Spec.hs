@@ -17,27 +17,22 @@ import Control.Monad.State
 specMtl :: Spec
 specMtl = do
 
-  describe "app" $ do
+  describe "sem app" $ do
     it "can" $ do
       (app :: AppMock Event) `shouldBe` return (User {userId = 43, userName = consoleMock})
+
+  describe "mtl app" $ do
+    it "can" $ do
+        runApp (app :: AppMtl Event) dbMock consoleMock
+      `shouldBe`
+        (,)
+          (User {userId = 43, userName = consoleMock}, (dbMock <> [User 43 consoleMock]))
+          "Yes?New user: Fizz.Bye!"
 
   describe "ok" $ do
     it "should be ok" $ do
       and [okLog, okDB, okConsole] `shouldBe` True
   
-  describe "app" $ do
-    it "can also" $ do
-      (runApp (app :: AppMtl Event) dbMock consoleMock)
-      `shouldBe`
-      ((,)
-        (User {userId = 43, userName = consoleMock}, (dbMock <> [User 43 consoleMock]))
-        "Yes?New user: Fizz.Bye!")
-
-type Det = ((User, [User]), String)
-
--- det :: Det -> Det
-det ((user, db), log) = db
-
 appT = runAppMtl app
 runApp app = runReader . runWriterT . runStateT appT
 
