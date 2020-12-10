@@ -6,7 +6,6 @@ import Effects.Utils
 
 import FileSystem
 import Polysemy
-import Data.Function ((&))
 
 data Console m a where {
 
@@ -79,6 +78,6 @@ runMock =
 appMock :: AppMock Event
 appMock = runMock app
 mainMock :: IO ()
-mainMock = appMock & print
+mainMock = print appMock
 
 -- TODO mtl-like app instance
