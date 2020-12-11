@@ -36,11 +36,12 @@ specMtl = do
   specOK
 
   where
-    
+
     expectedUser = User {userId = succ lastUserIdMock, userName = consoleMock} :: User
 
-appT = runAppMtl app
-runApp app = runReader . runWriterT . runStateT appT
+    appT = runAppMtl app
+    
+    runApp app = runReader . runWriterT . runStateT appT
 
 -- runMock :: AppT Event -> AppMock Event
 -- runMock app = (runReader $ runWriterT $ runStateT app dbMock) consoleMock
