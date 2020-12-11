@@ -22,7 +22,7 @@ specMtl = do
       runApp (app :: AppMtl Event) dbMock consoleMock
         `shouldBe`
           (,)
-            (User {userId = succ lastUserIdMock, userName = consoleMock}, (dbMock <> [User (succ lastUserIdMock) consoleMock]))
+            (expectedUser, (dbMock <> [expectedUser]))
             "Yes?New user: Fizz.Bye!"
 
   -- describe "t app" $ do
@@ -34,6 +34,10 @@ specMtl = do
   specMock
 
   specOK
+
+  where
+    
+    expectedUser = User {userId = succ lastUserIdMock, userName = consoleMock} :: User
 
 appT = runAppMtl app
 runApp app = runReader . runWriterT . runStateT appT
