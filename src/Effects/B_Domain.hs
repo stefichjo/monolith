@@ -19,7 +19,7 @@ class Monad m => DB m where
   dbCreate :: User -> m ()
   dbRead :: m [User]
 
-  dbNextUser :: Monad m => UserName -> m User
+  dbNextUser :: UserName -> m User
   dbNextUser name = do
     User lastId _ <- maximum <$> dbRead
     return $ User (succ lastId) name
@@ -48,9 +48,8 @@ data LogSem m a where {
   
   }; makeSem ''LogSem
 
-
--- TODO why AppSem and not DbSem-ish?
-dbSemNextUser :: UserName -> Members '[DbSem] r => Sem r User
+type DbSemNextUser r a = Members '[DbSem] r => Sem r a
+dbSemNextUser :: UserName -> DbSemNextUser r User
 dbSemNextUser name = do
   User lastId  _ <- maximum <$> dbSemRead
   return $ User (succ lastId) name
