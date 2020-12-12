@@ -1,6 +1,6 @@
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TemplateHaskell, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 {-# LANGUAGE TypeOperators, ConstraintKinds, GADTs #-}
+{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 
 module Effects.Utils where
 
@@ -16,6 +16,22 @@ dbFileName = "db" :: FilePath
 -- build :: Monad m => Sem '[Embed m] a -> m a
 -- build = runM
 
+-- APPLICATION = DSL = LANGUAGE
+
+type App m a = (Console m, DB m, Log m) => m a
+app :: App m Event
+app = do
+  consoleWrite "Yes?"
+  name <- consoleRead
+  logWrite $ "New user: " <> name <> "."
+  user <- nextUser name
+  dbCreate user
+  consoleWrite "Bye!"
+  return user
+
+-- mainIO :: IO ()
+-- mainIO = app >>= print
+
 -- MODEL
 
 type UserId = Int
@@ -30,4 +46,25 @@ data User =
     Eq, Ord, Show, Read)
 
 type Event = User
+
+-- DOMAIN
+
+class Monad m => Console m where
+
+  consoleRead :: m String
+  consoleRead = return "..."
+  consoleWrite :: String -> m ()
+  consoleWrite msg = return ()
+class Monad m => DB m where
+
+  dbCreate :: User -> m ()
+  dbRead :: m [User]
+
+  nextUser :: Monad m => UserName -> m User
+  nextUser name = do
+    User lastId _ <- maximum <$> dbRead
+    return $ User (succ lastId) name
+class Monad m => Log m where
+
+  logWrite :: String -> m ()
 

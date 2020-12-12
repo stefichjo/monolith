@@ -2,7 +2,8 @@
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.Sem where
-import Effects.Utils
+import Effects.Utils hiding (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
+import qualified Effects.Utils (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 
 import FileSystem
 import Polysemy

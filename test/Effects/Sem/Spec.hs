@@ -3,7 +3,8 @@
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.Sem.Spec where
 import Effects.Sem
-import Effects.Utils
+import Effects.Utils hiding (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
+import qualified Effects.Utils (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 import Effects.Fixtures
 
 import Test.Hspec
