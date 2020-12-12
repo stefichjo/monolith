@@ -25,8 +25,6 @@ specMtl = do
             (expectedUser, (dbMock <> [expectedUser]))
             "Yes?New user: Fizz.Bye!"
 
-  specMock
-
   specOK
 
   where
@@ -106,22 +104,6 @@ instance Console AppMtl where
 
 -- can this be simplified, intermediate steps omitted?
 -- are app and appmock tested in sem spec?
-
-specMock :: Spec
-specMock = do
-
-  describe "app mock" $ do
-    it "can" $ do
-      (app :: AppMock Event) `shouldBe` return expectedUser
-
-instance Console AppMock where
-  consoleRead = return consoleMock
-  consoleWrite msg = return ()
-instance DB AppMock where
-  dbCreate user = return ()
-  dbRead = return dbMock
-instance Log AppMock where
-  logWrite msg = return ()
 
 specOK :: Spec
 specOK = do
