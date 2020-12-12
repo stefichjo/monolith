@@ -2,6 +2,8 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DataKinds, GADTs #-}
 module Effects.B_Language.Spec where
+import Effects.B_Language.Mtl.Spec
+import Effects.B_Language.Sem.Spec
 import Effects.B_Language
 import Effects.B_Domain
 import Effects.A_Model
@@ -23,6 +25,10 @@ specB_Language = do
   describe "app mock (sem)" $ do
     it "ok" $ do
       (interpretMock appSem :: AppMock Event) `shouldBe` return expectedUser
+
+  specMtl
+
+  specSem
 
 type AppMock = Identity
 
