@@ -26,10 +26,15 @@ specEffects = do
   specSem
 
 instance Console AppMock where
+
   consoleRead = return consoleMock
   consoleWrite msg = return ()
+
 instance DB AppMock where
+
   dbCreate user = return ()
   dbRead = return dbMock
+
 instance Log AppMock where
+
   logWrite msg = return ()
