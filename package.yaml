@@ -28,8 +28,6 @@ library:
     - Lib
     - Utils
     - Effects
-    - Effects.Config
-    - Effects.Mtl
     - Effects.Sem
     - Effects.A_Model
     - Effects.B_Domain
