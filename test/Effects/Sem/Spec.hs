@@ -17,7 +17,7 @@ specSem = do
 
   describe "app" $ do
     it "can" $ do
-      runMock app `shouldBe` return (User {userId = succ lastUserIdMock, userName = consoleMock})
+      runMock app `shouldBe` return expectedUser
 
 runMock :: Sem '[Console, DB, Log, Embed AppMock] Event -> AppMock Event
 runMock =
@@ -35,3 +35,4 @@ runMock =
         ConsoleRead       -> return consoleMock)
 
 -- TODO mtl-like app instance
+-- TODO run with state, writer and reader

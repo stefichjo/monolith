@@ -25,12 +25,6 @@ specMtl = do
             (expectedUser, (dbMock <> [expectedUser]))
             "Yes?New user: Fizz.Bye!"
 
-  -- describe "t app" $ do
-  --   it "can" $ do
-  --     runAppT (appT :: AppT Event) dbMock consoleMock
-  --       `shouldBe`
-  --         (((), ()), ())
-
   specMock
 
   specOK
@@ -40,9 +34,6 @@ specMtl = do
     appT = runAppMtl app
     
     runApp app = runReader . runWriterT . runStateT appT
-
--- runMock :: AppT Event -> AppMock Event
--- runMock app = (runReader $ runWriterT $ runStateT app dbMock) consoleMock
 
 type ConsoleT = WriterT String (Reader String)
 instance Console ConsoleT where
