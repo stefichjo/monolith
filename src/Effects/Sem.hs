@@ -4,6 +4,7 @@
 module Effects.Sem where
 import Effects.Config
 import Effects.A_Model
+import Effects.B_Domain
 import FileSystem
 import Polysemy
 
@@ -27,9 +28,8 @@ data LogSem m a where {
   
   }; makeSem ''LogSem
 
--- TODO divergent implementations
-nextUser :: UserName -> AppSem r User
-nextUser name = do
+dbSemNextUser :: UserName -> AppSem r User
+dbSemNextUser name = do
   User lastId  _ <- maximum <$> dbSemRead
   return $ User (succ lastId) name
 
@@ -39,7 +39,7 @@ appSem = do
   consoleSemWrite "Yes?"
   name <- consoleSemRead
   logSemWrite $ "New user: " <> name <> "."
-  user <- nextUser name
+  user <- dbSemNextUser name
   dbSemCreate user
   consoleSemWrite "Bye!"
   return user

@@ -9,7 +9,7 @@ app = do
   consoleWrite "Yes?"
   name <- consoleRead
   logWrite $ "New user: " <> name <> "."
-  user <- nextUser name
+  user <- dbNextUser name
   dbCreate user
   consoleWrite "Bye!"
   return user

@@ -15,8 +15,8 @@ class Monad m => DB m where
   dbCreate :: User -> m ()
   dbRead :: m [User]
 
-  nextUser :: Monad m => UserName -> m User
-  nextUser name = do
+  dbNextUser :: Monad m => UserName -> m User
+  dbNextUser name = do
     User lastId _ <- maximum <$> dbRead
     return $ User (succ lastId) name
 class Monad m => Log m where
