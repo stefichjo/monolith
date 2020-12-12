@@ -1,8 +1,12 @@
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
+-- TODO clean up pragmas
 module Effects.C_Infrastructure where
 import Effects.B_Domain
 import Effects.Config
 
 import FileSystem
+import Polysemy
 
 instance Console IO where
 
@@ -17,3 +21,20 @@ instance DB IO where
 instance Log IO where
 
   logWrite = addFile logFileName
+
+
+runSemIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed IO] a -> IO a
+runSemIO =
+  runM
+    .
+      (interpret $ \case
+        LogSemWrite msg -> embed $ addFile logFileName msg)
+    .
+      (interpret $ \case
+        DbSemCreate user -> embed $ addFile dbFileName $ user
+        DbSemRead        -> embed $ map read . lines <$> readFileContents dbFileName)
+    . 
+      (interpret $ \case
+        ConsoleSemWrite line -> embed $ putStrLn line
+        ConsoleSemRead       -> embed getLine)
+
