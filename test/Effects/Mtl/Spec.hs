@@ -19,38 +19,17 @@ specMtl = do
 
   describe "app (mtl)" $ do
     it "ok" $ do
-      runApp (app :: AppMtl Event) dbMock consoleMock
-        `shouldBe`
-          (,)
-            (expectedUser, (dbMock <> [expectedUser]))
-            "Yes?New user: Fizz.Bye!"
-
-  specOK
+      runApp app dbMock consoleMock
+      `shouldBe`
+      (,)
+        (expectedUser, (dbMock <> [expectedUser]))
+        "Yes?New user: Fizz.Bye!"
 
   where
 
-    appT = runAppMtl app
-    
-    runApp app = runReader . runWriterT . runStateT appT
+    runApp app = runReader . runWriterT . runStateT (runAppMtl app)
 
-type ConsoleT = WriterT String (Reader String)
-instance Console ConsoleT where
-
-  consoleRead = ask
-  consoleWrite = tell
-
-type DBT = State [User]
-instance DB DBT where
-
-  dbRead = get
-  dbCreate user = dbRead >>= put . append user
-
-type LogT = Writer String
-instance Log LogT where
-
-  logWrite = tell
-
-type AppT = StateT [User] ConsoleT
+type AppT = StateT [User] (WriterT String (Reader String))
 newtype AppMtl a =
 
   AppMtl {
@@ -73,41 +52,3 @@ instance Log AppMtl where
 
   logWrite = tell
 
-specOK :: Spec
-specOK = do
-
-  describe "ok" $ do
-    it "should be ok" $ do
-      and [okLog, okDB, okConsole] `shouldBe` True
-
-okConsole = and [
-
-  (runReader . runWriterT) (consoleRead) "Hi!"
-  ==
-  ("Hi!", ""),
-  
-  (runReader . runWriterT) (consoleWrite "Hi!") ""
-  ==
-  ((), "Hi!"),
-
-  True]
-  
-okDB = and [
-
-  runState (dbCreate (last dbMock)) (init dbMock)
-  ==
-  ((), dbMock),
-  
-  runState dbRead dbMock
-  ==
-  (dbMock, dbMock),
-
-  True]
-
-okLog = and [
-
-    runWriter (logWrite "Hi!")
-    ==
-    ((), "Hi!"),
-    
-  True]
