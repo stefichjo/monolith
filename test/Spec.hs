@@ -16,4 +16,3 @@ spec = do
   specUtils   
 
   specEffects
-
