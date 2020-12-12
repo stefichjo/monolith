@@ -6,6 +6,7 @@ import Effects.A_Model
 import Effects.B_Domain
 import Effects.B_Language
 import Effects.Fixtures
+
 import Effects.Mtl.Spec
 import Effects.Sem.Spec
 
@@ -23,7 +24,7 @@ specEffects = do
 
   describe "app mock (sem)" $ do
     it "ok" $ do
-      (interpretMock appSem :: AppMock Event) `shouldBe` Identity expectedUser
+      (interpretMock appSem :: AppMock Event) `shouldBe` return expectedUser
 
   specMtl
 
