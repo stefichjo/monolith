@@ -1,20 +1,17 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DataKinds, GADTs #-}
-
 module Effects.Spec where
-
-import Test.Hspec
-
-import Polysemy
-
-import Effects.Mtl.Spec
-import Effects.Sem.Spec
-
 import Effects.A_Model
 import Effects.B_Domain
 import Effects.B_Language
 import Effects.Fixtures
+import Effects.Mtl.Spec
+import Effects.Sem.Spec
+
+import Test.Hspec
+
+import Polysemy
 
 specEffects :: Spec
 specEffects = do
