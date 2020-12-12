@@ -2,7 +2,6 @@
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.Sem.Spec where
-import Effects.Sem
 import Effects.Fixtures
 import Effects.A_Model
 import Effects.B_Domain
