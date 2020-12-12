@@ -5,6 +5,7 @@
 module Effects.Utils where
 
 import Effects.A_Model
+import Effects.B_Domain
 
 -- TODO Config.hs ("Stage.hs" ?)
 
@@ -33,26 +34,5 @@ app = do
 
 -- mainIO :: IO ()
 -- mainIO = app >>= print
-
--- DOMAIN
-
-class Monad m => Console m where
-
-  consoleRead :: m String
-  consoleRead = return "..."
-  consoleWrite :: String -> m ()
-  consoleWrite msg = return ()
-class Monad m => DB m where
-
-  dbCreate :: User -> m ()
-  dbRead :: m [User]
-
-  nextUser :: Monad m => UserName -> m User
-  nextUser name = do
-    User lastId _ <- maximum <$> dbRead
-    return $ User (succ lastId) name
-class Monad m => Log m where
-
-  logWrite :: String -> m ()
 
 -- TODO apparently, these aren't utils but the architecture itself.
