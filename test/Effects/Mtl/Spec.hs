@@ -7,7 +7,6 @@ import Effects.B_Domain
 import Effects.B_Language
 
 import Test.Hspec
-import Test.QuickCheck
 
 import Utils
 

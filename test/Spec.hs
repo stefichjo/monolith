@@ -1,7 +1,6 @@
 module Main where
 
 import Test.Hspec
-import Test.QuickCheck
 
 import Utils.Spec
 import Effects.Spec

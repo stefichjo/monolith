@@ -9,7 +9,6 @@ import Effects.B_Domain hiding (Console, DB, Log, consoleRead, consoleWrite, dbR
 import qualified Effects.B_Domain (Console, DB, Log, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 
 import Test.Hspec
-import Test.QuickCheck
 
 import Utils
 import Polysemy
