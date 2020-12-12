@@ -38,6 +38,7 @@ instance Console ConsoleT where
 
   consoleRead = ask
   consoleWrite = tell
+
 newtype ConsoleMtl a =
 
   ConsoleMtl {
@@ -45,6 +46,7 @@ newtype ConsoleMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadReader String, MonadWriter String)
+
 instance Console ConsoleMtl where
 
   consoleRead = ConsoleMtl $ consoleRead
@@ -53,8 +55,9 @@ instance Console ConsoleMtl where
 type DBT = State [User]
 instance DB DBT where
 
-  dbCreate user = dbRead >>= put . append user
   dbRead = get
+  dbCreate user = dbRead >>= put . append user
+
 newtype DBMtl a =
   
   DBMtl {
@@ -62,15 +65,17 @@ newtype DBMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadState [User])
+
 instance DB DBMtl where
 
-  dbCreate user = DBMtl $ dbCreate user
   dbRead = DBMtl $ get
+  dbCreate user = DBMtl $ dbCreate user
 
 type LogT = Writer String
 instance Log LogT where
 
   logWrite = tell
+
 newtype LogMtl a =
   
   LogMtl {
@@ -78,6 +83,7 @@ newtype LogMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadWriter String)
+
 instance Log LogMtl where
 
   logWrite msg = LogMtl $ logWrite msg
@@ -90,13 +96,16 @@ newtype AppMtl a =
   deriving (
     Functor, Applicative, Monad,
     MonadReader String, MonadWriter String, MonadState [User])
+
 instance Log AppMtl where
 
   logWrite = tell
+
 instance DB AppMtl where
 
-  dbCreate user = dbRead >>= put . append user
   dbRead = get
+  dbCreate user = dbRead >>= put . append user
+
 instance Console AppMtl where
 
   consoleRead = ask
@@ -128,6 +137,7 @@ okLog = and [
 
   runLogT = runWriter
   runLog = runLogT . runLogMtl
+
 okDB = and [
 
   -- DBT ()
@@ -154,6 +164,7 @@ okDB = and [
 
   runDBT = runState
   runDB = runDBT . runDBMtl
+
 okConsole = and [
 
   -- ConsoleT String
