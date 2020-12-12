@@ -8,26 +8,6 @@ import Effects.B_Domain
 import FileSystem
 import Polysemy
 
-data ConsoleSem m a where {
-
-    ConsoleSemWrite :: String -> ConsoleSem m ();
-    ConsoleSemRead :: ConsoleSem m String;
-
-  }; makeSem ''ConsoleSem
-
-data DbSem m a where {
-
-    DbSemCreate :: User -> DbSem m ();
-    DbSemRead :: DbSem m [User];
-
-  }; makeSem ''DbSem
-
-data LogSem m a where {
-
-    LogSemWrite :: String -> LogSem m ();
-  
-  }; makeSem ''LogSem
-
 dbSemNextUser :: UserName -> AppSem r User
 dbSemNextUser name = do
   User lastId  _ <- maximum <$> dbSemRead
