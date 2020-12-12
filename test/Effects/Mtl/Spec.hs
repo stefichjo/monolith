@@ -39,19 +39,6 @@ instance Console ConsoleT where
   consoleRead = ask
   consoleWrite = tell
 
-newtype ConsoleMtl a =
-
-  ConsoleMtl {
-    runConsoleMtl :: ConsoleT a }
-  deriving (
-    Functor, Applicative, Monad,
-    MonadReader String, MonadWriter String)
-
-instance Console ConsoleMtl where
-
-  consoleRead = ConsoleMtl $ consoleRead
-  consoleWrite msg = ConsoleMtl $ consoleWrite msg
-
 type DBT = State [User]
 instance DB DBT where
 
@@ -131,22 +118,10 @@ okConsole = and [
   runConsoleT (consoleWrite "Hi!") ""
   ==
   ((), "Hi!"),
-  
-  
-  -- ConsoleMtl String
-  runConsole (consoleRead) "Hi!"
-  ==
-  ("Hi!", ""),
 
-  -- ConsoleMtl ()
-  runConsole (consoleWrite "Hi!") ""
-  ==
-  ((), "Hi!"),
-  
   True] where
   
   runConsoleT = runReader . runWriterT
-  runConsole = runConsoleT . runConsoleMtl
 
 okDB = and [
 
