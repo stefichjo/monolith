@@ -36,5 +36,3 @@ https://github.com/thma/PolysemyCleanArchitecture
 Events:
 https://blog.jayway.com/2013/06/20/dont-publish-domain-events-return-them/
 -}
-
--- TODO use DBT and LogT as well

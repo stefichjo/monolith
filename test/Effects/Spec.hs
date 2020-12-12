@@ -24,10 +24,9 @@ specEffects = do
     it "ok" $ do
       runMock appSem `shouldBe` return expectedUser
 
-  specMtl -- more sophisticated test
+  specMtl
 
-  -- TODO specSem, sophisticated in-memory test
-
+  specSem
 
 instance Console AppMock where
 

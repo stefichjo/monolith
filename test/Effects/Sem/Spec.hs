@@ -12,5 +12,10 @@ import Test.Hspec
 import Utils
 import Polysemy
 
--- TODO mtl-like app instance
--- TODO run with state, writer and reader
+-- TODO IMPLEMENT
+specSem :: Spec
+specSem = do
+
+  describe "app (sem) -- to be implemented" $ do
+    it "ok" $ do
+      True `shouldBe` True
