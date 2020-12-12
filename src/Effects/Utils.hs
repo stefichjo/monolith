@@ -4,7 +4,7 @@
 
 module Effects.Utils where
 
--- TODO Config.hs
+-- TODO Config.hs ("Stage.hs" ?)
 
 logFileName = "log" :: FilePath
 dbFileName = "db" :: FilePath
@@ -68,3 +68,4 @@ class Monad m => Log m where
 
   logWrite :: String -> m ()
 
+-- TODO apparently, these aren't utils but the architecture itself.

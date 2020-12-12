@@ -1,13 +1,7 @@
-{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 module Effects.Mtl where
 import Effects.Utils
 
 import FileSystem
-import Utils (append)
-
-import Control.Monad.Reader
-import Control.Monad.Writer
-import Control.Monad.State
 
 instance Console IO where
 
