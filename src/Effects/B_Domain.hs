@@ -8,10 +8,7 @@ import Polysemy
 class Monad m => Console m where
 
   consoleRead :: m String
-  consoleRead = return "..."
-
   consoleWrite :: String -> m ()
-  consoleWrite msg = return ()
 
 class Monad m => DB m where
 
