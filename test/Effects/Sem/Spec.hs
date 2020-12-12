@@ -20,20 +20,20 @@ specSem = do
     it "can" $ do
       runMock app `shouldBe` return expectedUser
 
-runMock :: Sem '[Console, DB, Log, Embed AppMock] Event -> AppMock Event
+runMock :: Sem '[ConsoleSem, DbSem, LogSem, Embed AppMock] Event -> AppMock Event
 runMock =
   runM
     .
       (interpret $ \case
-        LogWrite msg -> return ())
+        LogSemWrite msg -> return ())
     .
       (interpret $ \case
-        DbCreate user -> return ()
-        DbRead        -> return dbMock)
+        DbSemCreate user -> return ()
+        DbSemRead        -> return dbMock)
     .
       (interpret $ \case
-        ConsoleWrite line -> return ()
-        ConsoleRead       -> return consoleMock)
+        ConsoleSemWrite line -> return ()
+        ConsoleSemRead       -> return consoleMock)
 
 -- TODO mtl-like app instance
 -- TODO run with state, writer and reader
