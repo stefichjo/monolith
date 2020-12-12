@@ -37,8 +37,6 @@ specMtl = do
 
   where
 
-    expectedUser = User {userId = succ lastUserIdMock, userName = consoleMock} :: User
-
     appT = runAppMtl app
     
     runApp app = runReader . runWriterT . runStateT appT
@@ -123,7 +121,7 @@ specMock = do
 
   describe "app mock" $ do
     it "can" $ do
-      (app :: AppMock Event) `shouldBe` return (User {userId = succ lastUserIdMock, userName = consoleMock})
+      (app :: AppMock Event) `shouldBe` return expectedUser
 
 instance Console AppMock where
   consoleRead = return consoleMock
