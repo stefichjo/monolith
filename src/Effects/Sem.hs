@@ -13,25 +13,27 @@ data ConsoleSem m a where {
     ConsoleSemRead :: ConsoleSem m String;
 
   }; makeSem ''ConsoleSem
+
 data DbSem m a where {
 
     DbSemCreate :: User -> DbSem m ();
     DbSemRead :: DbSem m [User];
 
   }; makeSem ''DbSem
+
 data LogSem m a where {
 
     LogSemWrite :: String -> LogSem m ();
   
   }; makeSem ''LogSem
 
+-- TODO divergent implementations
 nextUser :: UserName -> AppSem r User
 nextUser name = do
   User lastId  _ <- maximum <$> dbSemRead
   return $ User (succ lastId) name
 
 type AppSem r a = Members '[ConsoleSem, DbSem, LogSem] r => Sem r a
-
 appSem :: AppSem r Event
 appSem = do
   consoleSemWrite "Yes?"
@@ -56,8 +58,6 @@ runSemIO =
       (interpret $ \case
         ConsoleSemWrite line -> embed $ putStrLn line
         ConsoleSemRead       -> embed getLine)
-mainSem :: IO ()
-mainSem = runSemIO appSem >>= print
 
 -- type Builder r = Sem r
 -- type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
