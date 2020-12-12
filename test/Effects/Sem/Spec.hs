@@ -6,6 +6,7 @@ import Effects.Sem
 import Effects.Fixtures
 import Effects.A_Model
 import Effects.B_Domain
+import Effects.B_Language
 
 import Test.Hspec
 
