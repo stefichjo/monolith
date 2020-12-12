@@ -17,8 +17,8 @@ import Control.Monad.State
 specMtl :: Spec
 specMtl = do
 
-  describe "mtl app" $ do
-    it "can" $ do
+  describe "app (mtl)" $ do
+    it "ok" $ do
       runApp (app :: AppMtl Event) dbMock consoleMock
         `shouldBe`
           (,)
