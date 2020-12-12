@@ -8,11 +8,6 @@ import Effects.B_Domain
 import FileSystem
 import Polysemy
 
-dbSemNextUser :: UserName -> AppSem r User
-dbSemNextUser name = do
-  User lastId  _ <- maximum <$> dbSemRead
-  return $ User (succ lastId) name
-
 type AppSem r a = Members '[ConsoleSem, DbSem, LogSem] r => Sem r a
 appSem :: AppSem r Event
 appSem = do

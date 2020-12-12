@@ -1,7 +1,5 @@
--- {-# LANGUAGE LambdaCase #-}
--- {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
-{-# LANGUAGE ConstrainedClassMethods #-}
+{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 module Effects.B_Domain where
 import Effects.A_Model
 
@@ -50,3 +48,9 @@ data LogSem m a where {
   
   }; makeSem ''LogSem
 
+
+-- TODO why AppSem and not DbSem-ish?
+dbSemNextUser :: UserName -> Members '[DbSem] r => Sem r User
+dbSemNextUser name = do
+  User lastId  _ <- maximum <$> dbSemRead
+  return $ User (succ lastId) name
