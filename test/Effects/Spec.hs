@@ -29,6 +29,9 @@ specEffects = do
 
   specMtl -- more sophisticated test
 
+  -- TODO specSem, sophisticated in-memory test
+
+
 instance Console AppMock where
 
   consoleRead = return consoleMock
@@ -36,8 +39,8 @@ instance Console AppMock where
 
 instance DB AppMock where
 
-  dbCreate user = return ()
   dbRead = return dbMock
+  dbCreate user = return ()
 
 instance Log AppMock where
 
@@ -52,9 +55,9 @@ runMock =
         LogSemWrite msg -> return ())
     .
       (interpret $ \case
-        DbSemCreate user -> return ()
-        DbSemRead        -> return dbMock)
+        DbSemRead        -> return dbMock
+        DbSemCreate user -> return ())
     .
       (interpret $ \case
-        ConsoleSemWrite line -> return ()
-        ConsoleSemRead       -> return consoleMock)
+        ConsoleSemRead       -> return consoleMock
+        ConsoleSemWrite line -> return ())
