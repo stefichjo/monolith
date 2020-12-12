@@ -8,6 +8,7 @@ import Test.QuickCheck
 import Effects.Mtl.Spec
 import Effects.Sem.Spec
 
+import Effects.A_Model
 import Effects.Utils
 import Effects.Fixtures
 
@@ -30,4 +31,3 @@ instance DB AppMock where
   dbRead = return dbMock
 instance Log AppMock where
   logWrite msg = return ()
-
