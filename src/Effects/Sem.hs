@@ -5,6 +5,7 @@ module Effects.Sem where
 import Effects.Utils hiding (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 import qualified Effects.Utils (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 
+import Effects.A_Model
 import FileSystem
 import Polysemy
 

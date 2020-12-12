@@ -1,5 +1,6 @@
 module Effects.Fixtures where
 import Effects.Utils
+import Effects.A_Model
 
 import Control.Monad.Identity
 

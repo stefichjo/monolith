@@ -6,6 +6,7 @@ import Effects.Sem
 import Effects.Utils hiding (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 import qualified Effects.Utils (Console, DB, Log, App, app, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 import Effects.Fixtures
+import Effects.A_Model
 
 import Test.Hspec
 import Test.QuickCheck

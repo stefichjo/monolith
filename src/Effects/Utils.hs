@@ -4,6 +4,8 @@
 
 module Effects.Utils where
 
+import Effects.A_Model
+
 -- TODO Config.hs ("Stage.hs" ?)
 
 logFileName = "log" :: FilePath
@@ -31,21 +33,6 @@ app = do
 
 -- mainIO :: IO ()
 -- mainIO = app >>= print
-
--- MODEL
-
-type UserId = Int
-type UserName = String
-data User =
-  
-  User {
-    userId :: UserId,
-    userName :: UserName
-  }
-  deriving (
-    Eq, Ord, Show, Read)
-
-type Event = User
 
 -- DOMAIN
 
