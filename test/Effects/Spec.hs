@@ -11,6 +11,7 @@ import Effects.Sem.Spec
 
 import Test.Hspec
 
+import Control.Monad.Identity
 import Polysemy
 
 specEffects :: Spec
@@ -18,15 +19,17 @@ specEffects = do
 
   describe "app mock" $ do
     it "ok" $ do
-      app `shouldBe` (return expectedUser :: AppMock Event)
+      (app :: AppMock Event) `shouldBe` return expectedUser
 
   describe "app mock (sem)" $ do
     it "ok" $ do
-      interpretMock appSem `shouldBe` (return expectedUser :: AppMock Event)
+      (interpretMock appSem :: AppMock Event) `shouldBe` Identity expectedUser
 
   specMtl
 
   specSem
+
+type AppMock = Identity
 
 instance Console AppMock where
 
