@@ -42,9 +42,7 @@ appSem = do
   consoleSemWrite "Bye!"
   return user
 
-type AppIO = IO
-
-runSemIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed AppIO] Event -> AppIO Event
+runSemIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed IO] Event -> IO Event
 runSemIO =
   runM
     .
@@ -58,8 +56,8 @@ runSemIO =
       (interpret $ \case
         ConsoleSemWrite line -> embed $ putStrLn line
         ConsoleSemRead       -> embed getLine)
-mainIO :: IO ()
-mainIO = runSemIO appSem >>= print
+mainSem :: IO ()
+mainSem = runSemIO appSem >>= print
 
 -- type Builder r = Sem r
 -- type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
