@@ -2,7 +2,6 @@
 {-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving #-}
 module Effects.Mtl.Spec where
 import Effects.Mtl
-import Effects.Utils
 import Effects.Fixtures
 import Effects.A_Model
 import Effects.B_Domain

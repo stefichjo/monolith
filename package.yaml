@@ -28,7 +28,7 @@ library:
     - Lib
     - Utils
     - Effects
-    - Effects.Utils
+    - Effects.Config
     - Effects.Mtl
     - Effects.Sem
     - Effects.A_Model

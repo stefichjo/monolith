@@ -11,7 +11,6 @@ import Effects.Sem.Spec
 import Effects.A_Model
 import Effects.B_Domain
 import Effects.B_Language
-import Effects.Utils
 import Effects.Fixtures
 
 specEffects :: Spec

@@ -2,8 +2,7 @@
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.Sem where
-import Effects.Utils hiding (App, app)
-
+import Effects.Config
 import Effects.A_Model
 import Effects.B_Domain hiding (Console, DB, Log, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 import qualified Effects.B_Domain (Console, DB, Log, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)

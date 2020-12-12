@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 720d87281e5455beca59b9ed1e49fe3f2db05c56c6d735f06f89880c8f85bc3a
+-- hash: f9163cb570cf8650080ea6774e5c8ccb5bf9a06bc2bc784c96e872b7b7291591
 
 name:           monolith
 version:        0.1.0.0
@@ -30,7 +30,7 @@ library
       Lib
       Utils
       Effects
-      Effects.Utils
+      Effects.Config
       Effects.Mtl
       Effects.Sem
       Effects.A_Model

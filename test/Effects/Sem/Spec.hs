@@ -3,7 +3,6 @@
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.Sem.Spec where
 import Effects.Sem
-import Effects.Utils hiding (App, app)
 import Effects.Fixtures
 import Effects.A_Model
 import Effects.B_Domain hiding (Console, DB, Log, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
