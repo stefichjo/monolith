@@ -18,11 +18,11 @@ specEffects = do
 
   describe "app mock" $ do
     it "ok" $ do
-      (app :: AppMock Event) `shouldBe` return expectedUser
+      app `shouldBe` (return expectedUser :: AppMock Event)
 
   describe "app mock (sem)" $ do
     it "ok" $ do
-      runMock appSem `shouldBe` return expectedUser
+      interpretMock appSem `shouldBe` (return expectedUser :: AppMock Event)
 
   specMtl
 
@@ -43,8 +43,8 @@ instance Log AppMock where
   logWrite msg = return ()
 
 
-runMock :: Sem '[ConsoleSem, DbSem, LogSem, Embed AppMock] Event -> AppMock Event
-runMock =
+interpretMock :: Monad m => Sem '[ConsoleSem, DbSem, LogSem, Embed m] Event -> m Event
+interpretMock =
   runM
     .
       (interpret $ \case

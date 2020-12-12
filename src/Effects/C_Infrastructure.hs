@@ -22,8 +22,8 @@ instance Log IO where
   logWrite = addFile logFileName
 
 
-runSemIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed IO] a -> IO a
-runSemIO =
+interpretIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed IO] a -> IO a
+interpretIO =
   runM
     .
       (interpret $ \case

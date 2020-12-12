@@ -8,4 +8,4 @@ main :: IO ()
 main = app >>= print
 
 mainSem :: IO ()
-mainSem = runSemIO appSem >>= print
+mainSem = interpretIO appSem >>= print
