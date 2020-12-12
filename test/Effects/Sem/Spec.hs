@@ -5,8 +5,6 @@ module Effects.Sem.Spec where
 import Effects.Sem
 import Effects.Fixtures
 import Effects.A_Model
-import Effects.B_Domain hiding (Console, DB, Log, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
-import qualified Effects.B_Domain (Console, DB, Log, consoleRead, consoleWrite, dbRead, dbCreate, nextUser, logWrite)
 
 import Test.Hspec
 
@@ -18,7 +16,7 @@ specSem = do
 
   describe "app" $ do
     it "can" $ do
-      runMock app `shouldBe` return expectedUser
+      runMock appSem `shouldBe` return expectedUser
 
 runMock :: Sem '[ConsoleSem, DbSem, LogSem, Embed AppMock] Event -> AppMock Event
 runMock =

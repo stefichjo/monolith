@@ -25,15 +25,15 @@ data LogSem m a where {
   
   }; makeSem ''LogSem
 
-nextUser :: UserName -> App r User
+nextUser :: UserName -> AppSem r User
 nextUser name = do
   User lastId  _ <- maximum <$> dbSemRead
   return $ User (succ lastId) name
 
-type App r a = Members '[ConsoleSem, DbSem, LogSem] r => Sem r a
+type AppSem r a = Members '[ConsoleSem, DbSem, LogSem] r => Sem r a
 
-app :: App r Event
-app = do
+appSem :: AppSem r Event
+appSem = do
   consoleSemWrite "Yes?"
   name <- consoleSemRead
   logSemWrite $ "New user: " <> name <> "."
@@ -44,8 +44,8 @@ app = do
 
 type AppIO = IO
 
-runIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed AppIO] Event -> AppIO Event
-runIO =
+runSemIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed AppIO] Event -> AppIO Event
+runSemIO =
   runM
     .
       (interpret $ \case
@@ -59,7 +59,7 @@ runIO =
         ConsoleSemWrite line -> embed $ putStrLn line
         ConsoleSemRead       -> embed getLine)
 mainIO :: IO ()
-mainIO = runIO app >>= print
+mainIO = runSemIO appSem >>= print
 
 -- type Builder r = Sem r
 -- type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
