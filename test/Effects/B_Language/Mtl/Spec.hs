@@ -1,9 +1,9 @@
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving #-}
-module Effects.Mtl.Spec where
-import Effects.A_Model
-import Effects.B_Domain
+module Effects.B_Language.Mtl.Spec where
 import Effects.B_Language
+import Effects.B_Domain
+import Effects.A_Model
 import Effects.Fixtures
 
 import Test.Hspec

@@ -1,10 +1,10 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
-module Effects.Sem.Spec where
-import Effects.A_Model
-import Effects.B_Domain
+module Effects.B_Language.Sem.Spec where
 import Effects.B_Language
+import Effects.B_Domain
+import Effects.A_Model
 import Effects.Fixtures
 
 import Test.Hspec
