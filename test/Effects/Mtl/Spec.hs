@@ -97,19 +97,19 @@ newtype AppMtl a =
     Functor, Applicative, Monad,
     MonadReader String, MonadWriter String, MonadState [User])
 
-instance Log AppMtl where
+instance Console AppMtl where
 
-  logWrite = tell
+  consoleRead = ask
+  consoleWrite = tell
 
 instance DB AppMtl where
 
   dbRead = get
   dbCreate user = dbRead >>= put . append user
 
-instance Console AppMtl where
+instance Log AppMtl where
 
-  consoleRead = ask
-  consoleWrite = tell
+  logWrite = tell
 
 -- TODO simplify
 
@@ -119,50 +119,6 @@ specOK = do
   describe "ok" $ do
     it "should be ok" $ do
       and [okLog, okDB, okConsole] `shouldBe` True
-
-okLog = and [
-
-    -- LogT ()
-    runLogT (logWrite "Hi!")
-    ==
-    ((), "Hi!"),
-    
-    -- LogMtl ()
-    runLog (logWrite "Hi!")
-    ==
-    ((), "Hi!"),
-    
-  True] where
-
-  runLogT = runWriter
-  runLog = runLogT . runLogMtl
-
-okDB = and [
-
-  -- DBT ()
-  runDBT (dbCreate (last dbMock)) (init dbMock)
-  ==
-  ((), dbMock),
-  
-  -- DBT [User]
-  runDBT dbRead dbMock
-  ==
-  (dbMock, dbMock),
-
-  -- DBMtl ()
-  runDB (dbCreate (last dbMock)) (init dbMock)
-  ==
-  ((), dbMock),
-  
-  -- DBMtl [User]
-  runDB dbRead dbMock
-  ==
-  (dbMock, dbMock),
-
-  True] where
-
-  runDBT = runState
-  runDB = runDBT . runDBMtl
 
 okConsole = and [
 
@@ -191,3 +147,48 @@ okConsole = and [
   
   runConsoleT = runReader . runWriterT
   runConsole = runConsoleT . runConsoleMtl
+
+okDB = and [
+
+  -- DBT ()
+  runDBT (dbCreate (last dbMock)) (init dbMock)
+  ==
+  ((), dbMock),
+  
+  -- DBT [User]
+  runDBT dbRead dbMock
+  ==
+  (dbMock, dbMock),
+
+  -- DBMtl ()
+  runDB (dbCreate (last dbMock)) (init dbMock)
+  ==
+  ((), dbMock),
+  
+  -- DBMtl [User]
+  runDB dbRead dbMock
+  ==
+  (dbMock, dbMock),
+
+  True] where
+
+  runDBT = runState
+  runDB = runDBT . runDBMtl
+
+okLog = and [
+
+    -- LogT ()
+    runLogT (logWrite "Hi!")
+    ==
+    ((), "Hi!"),
+    
+    -- LogMtl ()
+    runLog (logWrite "Hi!")
+    ==
+    ((), "Hi!"),
+    
+  True] where
+
+  runLogT = runWriter
+  runLog = runLogT . runLogMtl
+
