@@ -45,35 +45,10 @@ instance DB DBT where
   dbRead = get
   dbCreate user = dbRead >>= put . append user
 
-newtype DBMtl a =
-  
-  DBMtl {
-    runDBMtl :: DBT a }
-  deriving (
-    Functor, Applicative, Monad,
-    MonadState [User])
-
-instance DB DBMtl where
-
-  dbRead = DBMtl $ get
-  dbCreate user = DBMtl $ dbCreate user
-
 type LogT = Writer String
 instance Log LogT where
 
   logWrite = tell
-
-newtype LogMtl a =
-  
-  LogMtl {
-    runLogMtl :: LogT a }
-  deriving (
-    Functor, Applicative, Monad,
-    MonadWriter String)
-
-instance Log LogMtl where
-
-  logWrite msg = LogMtl $ logWrite msg
 
 type AppT = StateT [User] ConsoleT
 newtype AppMtl a =
@@ -98,8 +73,6 @@ instance Log AppMtl where
 
   logWrite = tell
 
--- TODO simplify
-
 specOK :: Spec
 specOK = do
 
@@ -109,61 +82,32 @@ specOK = do
 
 okConsole = and [
 
-  -- ConsoleT String
-  runConsoleT (consoleRead) "Hi!"
+  (runReader . runWriterT) (consoleRead) "Hi!"
   ==
   ("Hi!", ""),
   
-  -- ConsoleT ()
-  runConsoleT (consoleWrite "Hi!") ""
+  (runReader . runWriterT) (consoleWrite "Hi!") ""
   ==
   ((), "Hi!"),
 
-  True] where
+  True]
   
-  runConsoleT = runReader . runWriterT
-
 okDB = and [
 
-  -- DBT ()
-  runDBT (dbCreate (last dbMock)) (init dbMock)
+  runState (dbCreate (last dbMock)) (init dbMock)
   ==
   ((), dbMock),
   
-  -- DBT [User]
-  runDBT dbRead dbMock
+  runState dbRead dbMock
   ==
   (dbMock, dbMock),
 
-  -- DBMtl ()
-  runDB (dbCreate (last dbMock)) (init dbMock)
-  ==
-  ((), dbMock),
-  
-  -- DBMtl [User]
-  runDB dbRead dbMock
-  ==
-  (dbMock, dbMock),
-
-  True] where
-
-  runDBT = runState
-  runDB = runDBT . runDBMtl
+  True]
 
 okLog = and [
 
-    -- LogT ()
-    runLogT (logWrite "Hi!")
+    runWriter (logWrite "Hi!")
     ==
     ((), "Hi!"),
     
-    -- LogMtl ()
-    runLog (logWrite "Hi!")
-    ==
-    ((), "Hi!"),
-    
-  True] where
-
-  runLogT = runWriter
-  runLog = runLogT . runLogMtl
-
+  True]
