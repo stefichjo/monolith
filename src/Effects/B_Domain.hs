@@ -3,7 +3,6 @@ module Effects.B_Domain where
 import Effects.A_Model
 
 import Polysemy
--- TODO default implementations
 
 class Monad m => Console m where
 
@@ -12,8 +11,8 @@ class Monad m => Console m where
 
 class Monad m => DB m where
 
-  dbCreate :: User -> m ()
   dbRead :: m [User]
+  dbCreate :: User -> m ()
 
   dbNextUser :: UserName -> m User
   dbNextUser name = do
@@ -26,15 +25,15 @@ class Monad m => Log m where
 
 data ConsoleSem m a where {
 
-    ConsoleSemWrite :: String -> ConsoleSem m ();
     ConsoleSemRead :: ConsoleSem m String;
+    ConsoleSemWrite :: String -> ConsoleSem m ();
 
   }; makeSem ''ConsoleSem
 
 data DbSem m a where {
 
-    DbSemCreate :: User -> DbSem m ();
     DbSemRead :: DbSem m [User];
+    DbSemCreate :: User -> DbSem m ();
 
   }; makeSem ''DbSem
 

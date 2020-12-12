@@ -14,8 +14,8 @@ instance Console IO where
 
 instance DB IO where
 
-  dbCreate = addFile dbFileName
   dbRead = map read . lines <$> readFileContents dbFileName
+  dbCreate = addFile dbFileName
 
 instance Log IO where
 
@@ -30,10 +30,10 @@ runSemIO =
         LogSemWrite msg -> embed $ addFile logFileName msg)
     .
       (interpret $ \case
-        DbSemCreate user -> embed $ addFile dbFileName $ user
-        DbSemRead        -> embed $ map read . lines <$> readFileContents dbFileName)
+        DbSemRead        -> embed $ map read . lines <$> readFileContents dbFileName
+        DbSemCreate user -> embed $ addFile dbFileName $ user)
     . 
       (interpret $ \case
-        ConsoleSemWrite line -> embed $ putStrLn line
-        ConsoleSemRead       -> embed getLine)
+        ConsoleSemRead       -> embed getLine
+        ConsoleSemWrite line -> embed $ putStrLn line)
 
