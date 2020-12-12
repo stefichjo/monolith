@@ -33,6 +33,7 @@ library:
     - Effects.Sem
     - Effects.A_Model
     - Effects.B_Domain
+    - Effects.B_Language
   dependencies:
     - mtl
     - polysemy

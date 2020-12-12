@@ -19,19 +19,6 @@ dbFileName = "db" :: FilePath
 -- build :: Monad m => Sem '[Embed m] a -> m a
 -- build = runM
 
--- APPLICATION = DSL = LANGUAGE
-
-type App m a = (Console m, DB m, Log m) => m a
-app :: App m Event
-app = do
-  consoleWrite "Yes?"
-  name <- consoleRead
-  logWrite $ "New user: " <> name <> "."
-  user <- nextUser name
-  dbCreate user
-  consoleWrite "Bye!"
-  return user
-
 -- mainIO :: IO ()
 -- mainIO = app >>= print
 

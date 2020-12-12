@@ -9,8 +9,8 @@ import Effects.Mtl.Spec
 import Effects.Sem.Spec
 
 import Effects.A_Model
--- TODO import Console, DB, Log from Domain
 import Effects.B_Domain
+import Effects.B_Language
 import Effects.Utils
 import Effects.Fixtures
 
