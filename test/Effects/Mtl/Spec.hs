@@ -111,8 +111,7 @@ instance Console AppMtl where
   consoleRead = ask
   consoleWrite = tell
 
--- can this be simplified, intermediate steps omitted?
--- are app and appmock tested in sem spec?
+-- TODO simplify
 
 specOK :: Spec
 specOK = do

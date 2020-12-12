@@ -16,6 +16,6 @@ import Polysemy
 specSem :: Spec
 specSem = do
 
-  describe "app (sem) -- to be implemented" $ do
+  describe "app (sem)" $ do
     it "ok" $ do
       True `shouldBe` True
