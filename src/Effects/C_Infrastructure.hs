@@ -1,6 +1,5 @@
 module Effects.C_Infrastructure where
 import Effects.B_Domain
-
 import Effects.Config
 
 import FileSystem
