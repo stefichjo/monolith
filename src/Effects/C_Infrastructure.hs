@@ -1,6 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
--- TODO clean up pragmas
+{-# LANGUAGE DataKinds, GADTs #-}
 module Effects.C_Infrastructure where
 import Effects.B_Domain
 import Effects.Config

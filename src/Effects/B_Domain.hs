@@ -1,5 +1,4 @@
-{-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
-{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
+{-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds, RankNTypes #-}
 module Effects.B_Domain where
 import Effects.A_Model
 

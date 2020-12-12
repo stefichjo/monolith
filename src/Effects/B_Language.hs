@@ -1,5 +1,5 @@
-{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
-{-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DataKinds #-}
 module Effects.B_Language where
 import Effects.B_Domain
 import Effects.A_Model
@@ -27,10 +27,3 @@ appSem = do
   dbSemCreate user
   consoleSemWrite "Bye!"
   return user
-
--- type Builder r = Sem r
--- type With dsl r = forall a. Builder (dsl ': r) a -> Builder r a
--- type WithIO r = Member (Embed IO) r
--- type Build m a = Monad m => Builder '[Embed m] a -> m a
--- build :: Monad m => Sem '[Embed m] a -> m a
--- build = runM
