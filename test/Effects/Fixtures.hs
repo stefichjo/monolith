@@ -1,5 +1,5 @@
 module Effects.Fixtures where
-import Effects.A_Model
+import Effects.A_Model ( UserName, User(..), UserId )
 
 consoleMock :: UserName
 consoleMock = "Fizz"
