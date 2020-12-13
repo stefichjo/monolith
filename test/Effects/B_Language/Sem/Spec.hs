@@ -9,8 +9,7 @@ import Test.Hspec ( Spec, describe, it, shouldBe )
 
 -- TODO IMPLEMENT (PolysemyCleanArchitecture)
 specSem :: Spec
-specSem = do
+specSem = describe "B_Language.Sem" $ do
 
-  describe "app (sem)" $ do
-    it "ok" $ do
-      True `shouldBe` True
+  it "runs with expected in-memory effects" $ do
+    True `shouldBe` True

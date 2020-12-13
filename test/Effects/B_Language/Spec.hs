@@ -22,15 +22,13 @@ import Control.Monad.Identity ( Identity )
 import Polysemy ( Sem, runM, interpret, Embed )
 
 specLanguage :: Spec
-specLanguage = do
+specLanguage = describe "B_Language" $ do
 
-  describe "app mock (monad)" $ do
-    it "ok" $ do
-      (app :: AppMock Event) `shouldBe` return expectedUser
+  it "returns expected user (monad mock)" $
+    (app :: AppMock Event) `shouldBe` return expectedUser
 
-  describe "app mock (sem)" $ do
-    it "ok" $ do
-      (interpretMock appSem :: AppMock Event) `shouldBe` return expectedUser
+  it "returns expected user (Sem mock)" $
+    (interpretMock appSem :: AppMock Event) `shouldBe` return expectedUser
 
   specMtl
 

@@ -3,11 +3,9 @@ import Reservations
 
 import Test.Hspec ( Spec, describe, it, shouldBe )
 
--- import Date.Time.Calendar
-
--- TODO FIXME Natural v. Integer
 specReservations :: Spec
 specReservations = describe "Domain Logic" $ do
+
   it "computes the used capacity for an empty list of reservations" $
     usedCapacity [] `shouldBe` 0
 

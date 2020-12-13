@@ -17,15 +17,13 @@ import Control.Monad.Writer
 import Control.Monad.State ( StateT(..), MonadState(put, get) )
 
 specMtl :: Spec
-specMtl = do
-
-  describe "app (mtl)" $ do
-    it "ok" $ do
-      runApp app dbMock consoleMock
-      `shouldBe`
-      (,)
-        (expectedUser, dbMock <> [expectedUser])
-        "Yes?New user: Fizz.Bye!"
+specMtl = describe "B_Language.Mtl" $ do
+  it "runs with expected in-memory effects" $ do
+    runApp app dbMock consoleMock
+    `shouldBe`
+    (,)
+      (expectedUser, dbMock <> [expectedUser])
+      "Yes?New user: Fizz.Bye!"
 
   where
 
