@@ -18,7 +18,7 @@ import Control.Monad.State ( StateT(..), MonadState(put, get) )
 
 specMtl :: Spec
 specMtl = describe "B_Language.Mtl" $ do
-  it "runs with expected in-memory effects" $ do
+  it "runs with expected in-memory effects" $
     runApp app dbMock consoleMock
     `shouldBe`
     (,)

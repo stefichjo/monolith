@@ -11,5 +11,5 @@ import Test.Hspec ( Spec, describe, it, shouldBe )
 specSem :: Spec
 specSem = describe "B_Language.Sem" $ do
 
-  it "runs with expected in-memory effects" $ do
+  it "runs with expected in-memory effects" $
     True `shouldBe` True
