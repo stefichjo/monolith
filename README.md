@@ -20,15 +20,19 @@ import Polysemy
 
 * `stack build --file-watch --fast`
 
-# Set Up Visual Studio Code
+# Visual Studio Code
+
+## Fancy
+
+* `addition a b = a + b` → `addition :: Num a => a -> a -> a`
 
 * https://gitlab.haskell.org/zander/haskell_set-up/-/wikis/linux_fancy
 
-## ghcid
+### ghcid
 
 * `stack install ghcid`
 
-## ghcide
+### ghcide
 
 * `cd ~/Downloads`
 * `git clone https://github.com/digital-asset/ghcide.git`
@@ -41,13 +45,34 @@ import Polysemy
     * paste current resolver under `resolver`
 * `stack install`
 
-## Visual Studio Code
+### Set Up
 
 * https://github.com/haskell/ghcide#using-with-vs-code
   * `Ctrl-P` + `ext install haskell.haskell`
 * edit `stack.yaml`
   * update `resolver`, e.g. `url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/25.yaml`
 
+## Hoogle
+
+* `Num a => a -> a -> a` → `https://hackage.haskell.org/package/base-4.14.0.0/docs/Prelude.html#v:-43-`
+
+* https://marketplace.visualstudio.com/items?itemName=jcanero.hoogle-vscode
+  * `Ctrl-P` + `ext install jcanero.hoogle-vscode`
+  * `Alt-Shift-H`
+
+## Pointfree
+
+ * `addition a b = a + b` → `addition = (+)`
+
+ * `stack install pointfree`
+ * `stack install pointful`
+   * add to `extra-deps` in `stack.yaml`, e.g.:
+     * `haskell-src-exts-simple-1.21.1.0@sha256:b2f5b16263753a16d8462faf9d100812a864eaae41eec803cfd32f3ed7b18155,1578`
+     * `haskell-src-exts-1.21.1@sha256:11d18ec3f463185f81b7819376b532e3087f8192cffc629aac5c9eec88897b35,4541`
+
+ * https://marketplace.visualstudio.com/items?itemName=JoseDanielD.haskell-pointfree
+   * `Ctrl-P` + `ext install JoseDanielD.haskell-pointfree`
+   * "To use just select some code, right click the selected code and pick "Pointfree" from context menu."
 
 # Literature
 
@@ -67,3 +92,6 @@ Events:
 (TODO)
 * https://haskell-explained.gitlab.io/blog/posts/2019/07/28/polysemy-is-cool-part-1/
 * https://haskell-explained.gitlab.io/blog/posts/2019/07/31/polysemy-is-cool-part-2/
+
+DDD-Architekturen im Vergleich
+* https://www.maibornwolff.de/blog/ddd-architekturen-im-vergleich
