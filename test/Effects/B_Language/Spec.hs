@@ -21,8 +21,8 @@ import Test.Hspec ( Spec, describe, it, shouldBe )
 import Control.Monad.Identity ( Identity )
 import Polysemy ( Sem, runM, interpret, Embed )
 
-specB_Language :: Spec
-specB_Language = do
+specLanguage :: Spec
+specLanguage = do
 
   describe "app mock (monad)" $ do
     it "ok" $ do
@@ -57,13 +57,13 @@ interpretMock :: Monad m => Sem '[ConsoleSem, DbSem, LogSem, Embed m] Event -> m
 interpretMock =
   runM
     .
-      (interpret $ \case
-        LogSemWrite msg -> return ())
+      interpret (\case
+        LogSemWrite _ -> return ())
     .
-      (interpret $ \case
-        DbSemRead        -> return dbMock
-        DbSemCreate user -> return ())
+      interpret (\case
+        DbSemRead     -> return dbMock
+        DbSemCreate _ -> return ())
     .
-      (interpret $ \case
-        ConsoleSemRead       -> return consoleMock
-        ConsoleSemWrite line -> return ())
+      interpret (\case
+        ConsoleSemRead    -> return consoleMock
+        ConsoleSemWrite _ -> return ())

@@ -27,19 +27,17 @@ instance Log IO where
 
   logWrite = addFile logFileName
 
-
 interpretIO :: Sem '[ConsoleSem, DbSem, LogSem, Embed IO] a -> IO a
 interpretIO =
   runM
     .
-      (interpret $ \case
+      interpret (\case
         LogSemWrite msg -> embed $ addFile logFileName msg)
     .
-      (interpret $ \case
+      interpret (\case
         DbSemRead        -> embed $ map read . lines <$> readFileContents dbFileName
-        DbSemCreate user -> embed $ addFile dbFileName $ user)
+        DbSemCreate user -> embed $ addFile dbFileName user)
     . 
-      (interpret $ \case
+      interpret (\case
         ConsoleSemRead       -> embed getLine
         ConsoleSemWrite line -> embed $ putStrLn line)
-
