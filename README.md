@@ -26,6 +26,8 @@ import Polysemy
 
 * `addition a b = a + b` → `addition :: Num a => a -> a -> a`
 
+* `-- >>> succ 42` → `43`
+
 * https://gitlab.haskell.org/zander/haskell_set-up/-/wikis/linux_fancy
 
 ### ghcid
