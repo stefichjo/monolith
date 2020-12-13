@@ -24,7 +24,14 @@ import Polysemy
 
 ## Fancy
 
-* `addition a b = a + b` → `addition :: Num a => a -> a -> a`
+```hs
+addition a b = a + b
+```
+↓
+```hs
+addition :: Num a => a -> a -> a
+addition a b = a + b
+```
 
 * `-- >>> succ 42` → `43`
 
@@ -56,7 +63,13 @@ import Polysemy
 
 ## Hoogle
 
-* `Num a => a -> a -> a` → `https://hackage.haskell.org/package/base-4.14.0.0/docs/Prelude.html#v:-43-`
+```hs
+Num a => a -> a -> a
+```
+↓
+```hs
+(+)
+```
 
 * https://marketplace.visualstudio.com/items?itemName=jcanero.hoogle-vscode
   * `Ctrl-P` + `ext install jcanero.hoogle-vscode`
@@ -64,7 +77,13 @@ import Polysemy
 
 ## Pointfree
 
- * `addition a b = a + b` → `addition = (+)`
+```hs
+addition a b = a + b
+```
+↓
+```hs
+addition = (+)
+```
 
  * `stack install pointfree`
  * `stack install pointful`
@@ -77,6 +96,14 @@ import Polysemy
    * "To use just select some code, right click the selected code and pick "Pointfree" from context menu."
 
 ## Prettify Symbols
+
+```hs
+addition :: Num alpha => alpha -> alpha -> alpha
+```
+↓
+```hs
+addition ∷ Num α ⇒ α → α → α
+```
 
 * https://marketplace.visualstudio.com/items?itemName=siegebell.prettify-symbols-mode
   * `Ctrl-P` + `ext install siegebell.prettify-symbols-mode`
