@@ -78,7 +78,13 @@ import Polysemy
 
 * https://marketplace.visualstudio.com/items?itemName=siegebell.prettify-symbols-mode
   * `Ctrl-P` + `ext install siegebell.prettify-symbols-mode`
-  * Prettify Symbols Mode: Adjust Cursor Movement
+
+**TODO**
+* Prettify Symbols Mode: Adjust Cursor Movement
+* `.vscode/settings.json`
+* `::`
+* `=>` → `⇒`
+
 # Literature
 
 Tagles Final:
