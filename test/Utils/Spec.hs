@@ -1,9 +1,9 @@
 module Utils.Spec where
 
-import Test.Hspec
-import Test.QuickCheck
+import Test.Hspec ( Spec, describe, it, shouldBe )
+import Test.QuickCheck ( Testable(property) )
 
-import Utils
+import Utils ( append )
 
 specUtils :: Spec
 specUtils = do

@@ -2,9 +2,20 @@
 {-# LANGUAGE DataKinds #-}
 module Effects.B_Language where
 import Effects.B_Domain
-import Effects.A_Model
+    ( consoleSemRead,
+      consoleSemWrite,
+      dbSemCreate,
+      dbSemNextUser,
+      logSemWrite,
+      Console(..),
+      ConsoleSem,
+      DB(dbCreate, dbNextUser),
+      DbSem,
+      Log(..),
+      LogSem )
+import Effects.A_Model ( Event )
 
-import Polysemy
+import Polysemy ( Members, Sem )
 
 type App m a = (Console m, DB m, Log m) => m a
 app :: App m Event

@@ -1,11 +1,9 @@
-module Main where
+module Spec where
 
-import Test.Hspec
+import Test.Hspec ( Spec, hspec )
 
-import Utils.Spec
-import Effects.Spec
-
-import Utils
+import Utils.Spec ( specUtils )
+import Effects.Spec ( specEffects )
 
 main :: IO ()
 main = hspec spec

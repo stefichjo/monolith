@@ -1,8 +1,8 @@
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds, RankNTypes #-}
 module Effects.B_Domain where
-import Effects.A_Model
+import Effects.A_Model ( User(User), UserName )
 
-import Polysemy
+import Polysemy ( Members, Sem, makeSem )
 
 class Monad m => Console m where
 

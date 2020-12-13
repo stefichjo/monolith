@@ -14,7 +14,8 @@ addFile = writeFileContents AppendMode
 initFile :: FilePath -> IO ()
 initFile file = putFile file ""
 
-directory = "out/" :: FilePath
+directory :: FilePath
+directory = "out/"
 
 readFileContents :: FilePath -> IO String
 readFileContents file = openFile (directory ++ file) ReadMode >>= hGetContents

@@ -1,9 +1,7 @@
 module Effects.Spec where
 
-import Effects.B_Language.Spec
-import Test.Hspec
-
-import Utils
+import Effects.B_Language.Spec ( specB_Language )
+import Test.Hspec ( Spec )
 
 specEffects :: Spec
 specEffects = do

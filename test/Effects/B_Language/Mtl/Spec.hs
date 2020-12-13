@@ -1,18 +1,20 @@
-{-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
+{-# LANGUAGE RankNTypes, ConstrainedClassMethods #-}
 {-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving #-}
 module Effects.B_Language.Mtl.Spec where
-import Effects.B_Language
+import Effects.B_Language ( app )
 import Effects.B_Domain
-import Effects.A_Model
-import Effects.Fixtures
+    ( Console(..), DB(dbRead, dbCreate), Log(..) )
+import Effects.A_Model ( User )
+import Effects.Fixtures ( consoleMock, dbMock, expectedUser )
 
-import Test.Hspec
+import Test.Hspec ( Spec, describe, it, shouldBe )
 
-import Utils
+import Utils ( append )
 
-import Control.Monad.Reader
+import Control.Monad.Reader ( MonadReader(ask), runReader, Reader )
 import Control.Monad.Writer
-import Control.Monad.State
+    ( WriterT(runWriterT), MonadWriter(tell) )
+import Control.Monad.State ( StateT(..), MonadState(put, get) )
 
 specMtl :: Spec
 specMtl = do
@@ -22,7 +24,7 @@ specMtl = do
       runApp app dbMock consoleMock
       `shouldBe`
       (,)
-        (expectedUser, (dbMock <> [expectedUser]))
+        (expectedUser, dbMock <> [expectedUser])
         "Yes?New user: Fizz.Bye!"
 
   where

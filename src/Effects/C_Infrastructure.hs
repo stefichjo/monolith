@@ -2,10 +2,16 @@
 {-# LANGUAGE DataKinds, GADTs #-}
 module Effects.C_Infrastructure where
 import Effects.B_Domain
-import Effects.Config
+    ( Console(..),
+      ConsoleSem(..),
+      DB(dbRead, dbCreate),
+      DbSem(..),
+      Log(..),
+      LogSem(..) )
+import Effects.Config ( dbFileName, logFileName )
 
-import FileSystem
-import Polysemy
+import FileSystem ( addFile, readFileContents )
+import Polysemy ( Sem, embed, runM, interpret, Embed )
 
 instance Console IO where
 

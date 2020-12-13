@@ -2,18 +2,24 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DataKinds, GADTs #-}
 module Effects.B_Language.Spec where
-import Effects.B_Language.Mtl.Spec
-import Effects.B_Language.Sem.Spec
-import Effects.B_Language
+import Effects.B_Language.Mtl.Spec ( specMtl )
+import Effects.B_Language.Sem.Spec ( specSem )
+import Effects.B_Language ( app, appSem )
 import Effects.B_Domain
-import Effects.A_Model
+    ( Console(..),
+      DB(dbRead, dbCreate),
+      Log(..),
+      ConsoleSem(..),
+      DbSem(..),
+      LogSem(..) )
+import Effects.A_Model ( Event )
 
-import Effects.Fixtures
+import Effects.Fixtures ( consoleMock, dbMock, expectedUser )
 
-import Test.Hspec
+import Test.Hspec ( Spec, describe, it, shouldBe )
 
-import Control.Monad.Identity
-import Polysemy
+import Control.Monad.Identity ( Identity )
+import Polysemy ( Sem, runM, interpret, Embed )
 
 specB_Language :: Spec
 specB_Language = do
@@ -35,16 +41,16 @@ type AppMock = Identity
 instance Console AppMock where
 
   consoleRead = return consoleMock
-  consoleWrite msg = return ()
+  consoleWrite _ = return ()
 
 instance DB AppMock where
 
   dbRead = return dbMock
-  dbCreate user = return ()
+  dbCreate _ = return ()
 
 instance Log AppMock where
 
-  logWrite msg = return ()
+  logWrite _ = return ()
 
 
 interpretMock :: Monad m => Sem '[ConsoleSem, DbSem, LogSem, Embed m] Event -> m Event

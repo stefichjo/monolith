@@ -1,4 +1,7 @@
 module Effects.Config where
 
-logFileName = "log" :: FilePath
-dbFileName = "db" :: FilePath
+logFileName :: FilePath
+logFileName = "log"
+
+dbFileName :: FilePath
+dbFileName = "db"

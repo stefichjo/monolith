@@ -1,16 +1,10 @@
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RankNTypes, TypeSynonymInstances, ConstrainedClassMethods #-}
-{-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds #-}
 module Effects.B_Language.Sem.Spec where
-import Effects.B_Language
-import Effects.B_Domain
-import Effects.A_Model
-import Effects.Fixtures
+import Effects.B_Language ()
+import Effects.B_Domain ()
+import Effects.A_Model ()
 
-import Test.Hspec
-
-import Utils
-import Polysemy
+import Test.Hspec ( Spec, describe, it, shouldBe )
 
 -- TODO IMPLEMENT (PolysemyCleanArchitecture)
 specSem :: Spec

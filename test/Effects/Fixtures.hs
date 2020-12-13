@@ -1,9 +1,14 @@
 module Effects.Fixtures where
 import Effects.A_Model
 
-consoleMock = "Fizz" :: UserName
-lastUserIdMock = 42 :: UserId
+consoleMock :: UserName
+consoleMock = "Fizz"
 
-dbMock = [User {userId = lastUserIdMock, userName = "Bar"},User {userId = 23, userName = "Foo"}] :: [User]
+lastUserIdMock :: UserId
+lastUserIdMock = 42
 
-expectedUser = User {userId = succ lastUserIdMock, userName = consoleMock} :: User
+dbMock :: [User]
+dbMock = [User {userId = lastUserIdMock, userName = "Bar"},User {userId = 23, userName = "Foo"}]
+
+expectedUser :: User
+expectedUser = User {userId = succ lastUserIdMock, userName = consoleMock}
