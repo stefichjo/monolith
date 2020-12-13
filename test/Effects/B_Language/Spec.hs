@@ -18,7 +18,7 @@ import Polysemy
 specB_Language :: Spec
 specB_Language = do
 
-  describe "app mock (id)" $ do
+  describe "app mock (monad)" $ do
     it "ok" $ do
       (app :: AppMock Event) `shouldBe` return expectedUser
 

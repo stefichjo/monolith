@@ -12,3 +12,5 @@ data User =
     Eq, Ord, Show, Read)
 
 type Event = User
+
+-- TODO Event with timestamp

@@ -12,7 +12,7 @@ import Test.Hspec
 import Utils
 import Polysemy
 
--- TODO IMPLEMENT
+-- TODO IMPLEMENT (PolysemyCleanArchitecture)
 specSem :: Spec
 specSem = do
 
