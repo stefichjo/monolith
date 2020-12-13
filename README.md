@@ -139,7 +139,7 @@ Clean Architecture:
 Events:
 * https://blog.jayway.com/2013/06/20/dont-publish-domain-events-return-them/
 
-(TODO)
+Polysemy is fun!:
 * https://haskell-explained.gitlab.io/blog/posts/2019/07/28/polysemy-is-cool-part-1/
 * https://haskell-explained.gitlab.io/blog/posts/2019/07/31/polysemy-is-cool-part-2/
 

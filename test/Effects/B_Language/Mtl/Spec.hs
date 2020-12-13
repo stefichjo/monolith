@@ -24,7 +24,7 @@ specMtl = do
       runApp app dbMock consoleMock
       `shouldBe`
       (,)
-        (expectedUser, dbMock <> [expectedUser])
+        ([expectedUser], dbMock <> [expectedUser])
         "Yes?New user: Fizz.Bye!"
 
   where
