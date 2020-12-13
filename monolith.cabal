@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9c5459886d5109ea80ed48834bc563c34000c316d2f233a77ea66ca2c9afa3f8
+-- hash: c0a023e1d8e8b371e85207c8b61984440ac871c48802486ee4b3cb8f0ebc03eb
 
 name:           monolith
 version:        0.1.0.0
@@ -32,6 +32,7 @@ library
       Effects.A_Model
       Effects.B_Domain
       Effects.B_Language
+      Reservations
   other-modules:
       Effects.C_Infrastructure
       Effects.C_Presentation
@@ -69,6 +70,7 @@ test-suite monolith-test
       Effects.B_Language.Spec
       Effects.Fixtures
       Effects.Spec
+      Reservations.Spec
       Utils.Spec
       Paths_monolith
   hs-source-dirs:

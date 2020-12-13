@@ -30,6 +30,7 @@ library:
     - Effects.A_Model
     - Effects.B_Domain
     - Effects.B_Language
+    - Reservations
   dependencies:
     - mtl
     - polysemy
