@@ -2,7 +2,7 @@ module Effects.C_Presentation where
 import Effects.C_Infrastructure ( interpretIO )
 import Effects.B_Language ( app, appSem )
 
--- TODO REFACTOR JSON
+-- TODO REFACTOR JSON (PolysemyCleanArchitecture)
 
 main :: IO ()
 main = app >>= print
