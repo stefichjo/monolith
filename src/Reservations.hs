@@ -53,3 +53,6 @@ reservations :: [Reservation]
 reservations = [res1, res2]
 totalCapacity :: Integer
 totalCapacity = 20
+
+-- >>> day
+-- 2020-01-29

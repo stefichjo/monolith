@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0278293b208fca0e0fd6e5f1d9afbdc6e8ef2c2447d7068bdf77e24f9fee4e70
+-- hash: 0ba0508e7a0154731870ecea5b4d3cd9cdd0847fb0cf07c698319acc25745d6e
 
 name:           monolith
 version:        0.1.0.0
@@ -84,5 +84,4 @@ test-suite monolith-test
     , monolith
     , mtl
     , polysemy
-    , time
   default-language: Haskell2010

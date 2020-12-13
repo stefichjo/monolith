@@ -63,4 +63,3 @@ tests:
     - mtl
     - hspec
     - QuickCheck
-    - time # Reservations
