@@ -24,20 +24,14 @@ reservation = Reservation {name = "Mr. Miller", quantity = 2, date = read "2020-
 -- | a key value map holding a list of reservations for any given day
 type ReservationMap = Map Day [Reservation]
 
--- >>> parseDay "2010-10-11"
--- 2010-10-11
-
-parseDay :: String -> Day
-parseDay = parseTimeOrError True defaultTimeLocale "%Y-%m-%d"
-
 foo :: ReservationMap
 foo = fromList
   [
     (
-      parseDay "2020-06-01",
+      read "2020-06-01",
         [
-          Reservation {date = parseDay "2020-06-01", name = "Mr. Miller", email = "manfred@miller.com", quantity = 2}, 
-          Reservation {date = parseDay "2020-06-01", name = "Andrew M. Jones", email = "amjones@example.com", quantity = 4}
+          Reservation {date = read "2020-06-01", name = "Mr. Miller", email = "manfred@miller.com", quantity = 2}, 
+          Reservation {date = read "2020-06-01", name = "Andrew M. Jones", email = "amjones@example.com", quantity = 4}
         ]
     )
   ]

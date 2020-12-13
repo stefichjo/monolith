@@ -9,3 +9,4 @@ specReservations = do
   describe "app mock (monad)" $ do
     it "ok" $ do
       True `shouldBe` True
+
