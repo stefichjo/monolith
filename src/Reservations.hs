@@ -51,7 +51,7 @@ res2 :: Reservation
 res2 = Reservation day "Thomas Miller" "tm@example.com" 3
 reservations :: [Reservation]
 reservations = [res1, res2]
-totalCapacity :: Integer
+totalCapacity :: Natural
 totalCapacity = 20
 
 -- >>> day
