@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Reservations where
+module Reservations (module Reservations, module Numeric.Natural) where
 
 import Data.Time.Calendar (fromGregorian,  Day )
 import Numeric.Natural ( Natural )
@@ -43,13 +43,9 @@ usedCapacity = foldr ((+) . quantity) 0
 availableSeats :: Natural-> [Reservation] -> Natural
 availableSeats maxCapacity reservations = maxCapacity - usedCapacity reservations
 
-day :: Day
 day = fromGregorian 2020 1 29
-res1 :: Reservation
 res1 = Reservation day "Andrew M. Jones" "amjones@example.com" 4
-res2 :: Reservation
 res2 = Reservation day "Thomas Miller" "tm@example.com" 3
-reservations :: [Reservation]
 reservations = [res1, res2]
 totalCapacity :: Natural
 totalCapacity = 20
