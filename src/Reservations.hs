@@ -37,7 +37,4 @@ foo = fromList
 
 -- | computes the number of reserved seats for a list of reservations
 usedCapacity :: [Reservation] -> Natural
-usedCapacity [] = 0
-usedCapacity (Reservation _ _ _ quantity : rest) = quantity + usedCapacity rest
-
--- TODO fold or something
+usedCapacity = foldr ((+) . quantity) 0
