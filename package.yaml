@@ -36,6 +36,7 @@ library:
     - polysemy
     - random
     - containers
+    - time # Reservations
 
 executables:
   monolith-exe:
