@@ -74,6 +74,11 @@ import Polysemy
    * `Ctrl-P` + `ext install JoseDanielD.haskell-pointfree`
    * "To use just select some code, right click the selected code and pick "Pointfree" from context menu."
 
+## Prettify Symbols
+
+* https://marketplace.visualstudio.com/items?itemName=siegebell.prettify-symbols-mode
+  * `Ctrl-P` + `ext install siegebell.prettify-symbols-mode`
+  * Prettify Symbols Mode: Adjust Cursor Movement
 # Literature
 
 Tagles Final:
