@@ -5,7 +5,6 @@ import Data.Time.Calendar ( Day )
 import Numeric.Natural ( Natural )
 import GHC.Generics ( Generic )
 import Data.Map (fromList,  Map )
-import Data.Time.Format (parseTimeOrError, readTime, defaultTimeLocale)
 
 -- A_MODEL ("The Domain layer")
 
@@ -36,3 +35,9 @@ foo = fromList
     )
   ]
 
+-- | computes the number of reserved seats for a list of reservations
+usedCapacity :: [Reservation] -> Natural
+usedCapacity [] = 0
+usedCapacity (Reservation _ _ _ quantity : rest) = quantity + usedCapacity rest
+
+-- TODO fold or something

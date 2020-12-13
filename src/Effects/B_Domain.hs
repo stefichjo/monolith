@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell, GADTs, ScopedTypeVariables, FlexibleContexts, DataKinds, PolyKinds, RankNTypes #-}
 module Effects.B_Domain where
-import Effects.A_Model ( User(User), UserName )
+import Effects.A_Model ( User(User, userId), UserName )
 
 import Polysemy ( Members, Sem, makeSem )
 
@@ -16,7 +16,7 @@ class Monad m => DB m where
 
   dbNextUser :: UserName -> m User
   dbNextUser name = do
-    User lastId _ <- maximum <$> dbRead
+    lastId <- userId . maximum <$> dbRead
     return $ User (succ lastId) name
 
 class Monad m => Log m where
@@ -46,5 +46,5 @@ data LogSem m a where {
 type DbSemNextUser r a = Members '[DbSem] r => Sem r a
 dbSemNextUser :: UserName -> DbSemNextUser r User
 dbSemNextUser name = do
-  User lastId  _ <- maximum <$> dbSemRead
+  lastId <- userId . maximum <$> dbSemRead
   return $ User (succ lastId) name
