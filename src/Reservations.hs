@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Reservations where
 
-import Data.Time.Calendar ( Day )
+import Data.Time.Calendar (fromGregorian,  Day )
 import Numeric.Natural ( Natural )
 import GHC.Generics ( Generic )
 import Data.Map (fromList,  Map )
@@ -38,3 +38,18 @@ foo = fromList
 -- | computes the number of reserved seats for a list of reservations
 usedCapacity :: [Reservation] -> Natural
 usedCapacity = foldr ((+) . quantity) 0
+
+-- | computes the number of available seats from a maximum capacity and a list of reservations.
+availableSeats :: Natural-> [Reservation] -> Natural
+availableSeats maxCapacity reservations = maxCapacity - usedCapacity reservations
+
+day :: Day
+day = fromGregorian 2020 1 29
+res1 :: Reservation
+res1 = Reservation day "Andrew M. Jones" "amjones@example.com" 4
+res2 :: Reservation
+res2 = Reservation day "Thomas Miller" "tm@example.com" 3
+reservations :: [Reservation]
+reservations = [res1, res2]
+totalCapacity :: Integer
+totalCapacity = 20

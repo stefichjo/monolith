@@ -1,12 +1,13 @@
 module Reservations.Spec where
-import Reservations
+import Reservations -- (res1)
 
 import Test.Hspec ( Spec, describe, it, shouldBe )
 
-specReservations :: Spec
-specReservations = do
+-- import Date.Time.Calendar
 
-  describe "app mock (monad)" $ do
-    it "ok" $ do
-      True `shouldBe` True
+specReservations :: Spec
+specReservations = describe "Domain Logic" $ do
+  it "computes the used capacity for an empty list of reservations" $
+    0 `shouldBe` 0
+
 
