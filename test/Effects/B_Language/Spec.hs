@@ -39,7 +39,6 @@ type AppMock = Identity
 instance Console AppMock where
 
   consoleRead = return consoleMock
-  consoleWrite _ = return ()
 
 instance DB AppMock where
 
@@ -63,5 +62,4 @@ interpretMock =
         DbSemCreate _ -> return ())
     .
       interpret (\case
-        ConsoleSemRead    -> return consoleMock
-        ConsoleSemWrite _ -> return ())
+        ConsoleSemRead    -> return consoleMock)

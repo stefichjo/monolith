@@ -23,7 +23,7 @@ specMtl = describe "B_Language.Mtl" $ do
     `shouldBe`
     (,)
       (expectedUser, dbMock <> [expectedUser])
-      "Yes?New user: Fizz.Bye!"
+      "New user: Fizz."
 
   where
 
@@ -41,7 +41,6 @@ newtype AppMtl a =
 instance Console AppMtl where
 
   consoleRead = ask
-  consoleWrite = tell
 
 instance DB AppMtl where
 

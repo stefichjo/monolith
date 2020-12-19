@@ -1,5 +1,6 @@
 module Reservations.Spec where
 import Reservations
+    ( availableSeats, res1, res2, totalCapacity, usedCapacity )
 
 import Test.Hspec ( Spec, describe, it, shouldBe )
 

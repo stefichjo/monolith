@@ -16,7 +16,6 @@ import Polysemy ( Sem, embed, runM, interpret, Embed )
 instance Console IO where
 
   consoleRead = getLine
-  consoleWrite = putStrLn
 
 instance DB IO where
 
@@ -39,5 +38,4 @@ interpretIO =
         DbSemCreate user -> embed $ addFile dbFileName user)
     . 
       interpret (\case
-        ConsoleSemRead       -> embed getLine
-        ConsoleSemWrite line -> embed $ putStrLn line)
+        ConsoleSemRead -> embed getLine)

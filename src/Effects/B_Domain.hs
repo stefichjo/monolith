@@ -7,7 +7,6 @@ import Polysemy ( Members, Sem, makeSem )
 class Monad m => Console m where
 
   consoleRead :: m String
-  consoleWrite :: String -> m ()
 
 class Monad m => DB m where
 
@@ -26,7 +25,6 @@ class Monad m => Log m where
 data ConsoleSem m a where {
 
     ConsoleSemRead :: ConsoleSem m String;
-    ConsoleSemWrite :: String -> ConsoleSem m ();
 
   }; makeSem ''ConsoleSem
 
