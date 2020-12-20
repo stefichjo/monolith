@@ -13,7 +13,7 @@ import Effects.B_Domain
       DbSem,
       Log(..),
       LogSem )
-import Effects.A_Model ( Event, UserName )
+import Effects.A_Model ( Event, User, UserId, UserName )
 
 import Polysemy ( Members, Sem )
 
@@ -38,3 +38,18 @@ appSem = do
 -- TODO acknowledge Event
 -- TODO execute Command
 -- TODO evaluate Query
+
+-- TODO UserName as argument of app or app runner (execute command)
+
+
+newtype Query = ReadUser UserId
+
+newtype Command = CreateNewUser UserName
+
+execute :: Command -> App m a
+execute (CreateNewUser userName) = undefined -- runReader app userName
+
+newtype Event' = NewUserCreated User
+
+acknowledge :: Event' -> App m a
+acknowledge (NewUserCreated user) = undefined 
