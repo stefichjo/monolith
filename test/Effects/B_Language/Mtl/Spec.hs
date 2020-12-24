@@ -1,7 +1,7 @@
 {-# LANGUAGE RankNTypes, ConstrainedClassMethods #-}
 {-# LANGUAGE FlexibleInstances, GeneralizedNewtypeDeriving #-}
 module Effects.B_Language.Mtl.Spec where
-import Effects.B_Language ( app )
+import Effects.B_Language ( app' )
 import Effects.B_Domain
     ( Console(..), DB(dbRead, dbCreate), Log(..) )
 import Effects.A_Model ( User )
@@ -19,7 +19,7 @@ import Control.Monad.State ( StateT(..), MonadState(put, get) )
 specMtl :: Spec
 specMtl = describe "B_Language.Mtl" $ do
   it "runs with expected in-memory effects" $
-    runApp app dbMock consoleMock
+    runApp app' dbMock consoleMock
     `shouldBe`
     (,)
       (expectedUser, dbMock <> [expectedUser])

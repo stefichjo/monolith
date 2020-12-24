@@ -4,7 +4,7 @@
 module Effects.B_Language.Spec where
 import Effects.B_Language.Mtl.Spec ( specMtl )
 import Effects.B_Language.Sem.Spec ( specSem )
-import Effects.B_Language ( app, appSem )
+import Effects.B_Language ( app', appSem )
 import Effects.B_Domain
     ( Console(..),
       DB(dbRead, dbCreate),
@@ -25,7 +25,7 @@ specLanguage :: Spec
 specLanguage = describe "B_Language" $ do
 
   it "returns expected user (monad mock)" $
-    (app :: AppMock Event) `shouldBe` return expectedUser
+    (app' :: AppMock Event) `shouldBe` return expectedUser
 
   it "returns expected user (Sem mock)" $
     (interpretMock appSem :: AppMock Event) `shouldBe` return expectedUser
