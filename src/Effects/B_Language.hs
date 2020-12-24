@@ -26,7 +26,13 @@ app' = do
   dbCreate user
   return user
 
-
+type App m = (DB m, Log m) => Command -> m Event
+app :: App m
+app name = do
+  logWrite $ "New user: " <> name <> "."
+  user <- dbNextUser name
+  dbCreate user
+  return user
 
 type AppSem r a = Members '[ConsoleSem, DbSem, LogSem] r => Sem r a
 appSem :: AppSem r Event
@@ -44,14 +50,4 @@ appSem = do
 -- TODO UserName as argument of app or app runner (execute command)
 
 
-newtype Query = ReadUser UserId
-
-newtype Command = CreateNewUser UserName
-
-execute :: Command -> App' m a
-execute (CreateNewUser userName) = undefined -- runReader app userName
-
-newtype Event' = NewUserCreated User
-
-acknowledge :: Event' -> App' m a
-acknowledge (NewUserCreated user) = undefined 
+type Command = String
