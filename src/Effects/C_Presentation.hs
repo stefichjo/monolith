@@ -1,6 +1,6 @@
 module Effects.C_Presentation where
 import Effects.C_Infrastructure ( interpretIO )
-import Effects.B_Language ( app', appSem, ack, Event )
+import Effects.B_Language ( app', appSem, ack, fooUser )
 
 -- TODO JSON (PolysemyCleanArchitecture)
 
@@ -11,5 +11,6 @@ mainSem :: IO ()
 mainSem = interpretIO appSem >>= print
 
 main' :: IO ()
-main' = ack undefined
+main' = ack fooUser
 
+-- >>> main'

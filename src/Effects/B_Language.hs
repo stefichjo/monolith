@@ -13,7 +13,7 @@ import Effects.B_Domain
       DbSem,
       Log(..),
       LogSem )
-import Effects.A_Model ( User, UserId, UserName )
+import Effects.A_Model ( User(..), UserId, UserName )
 
 import Polysemy ( Members, Sem )
 
@@ -35,6 +35,8 @@ app name = do
   return user
 
 type Event = User
+fooUser :: Event
+fooUser = User 42 "Hello!"
 
 -- TODO Event with timestamp
 
