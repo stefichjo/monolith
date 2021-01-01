@@ -13,7 +13,7 @@ import Effects.B_Domain
       DbSem,
       Log(..),
       LogSem )
-import Effects.A_Model ( Event, User, UserId, UserName )
+import Effects.A_Model ( User, UserId, UserName )
 
 import Polysemy ( Members, Sem )
 
@@ -31,14 +31,29 @@ app :: App m
 app name = do
   logWrite $ "New user: " <> name <> "."
   user <- dbNextUser name
-  dbCreate user
+  dbCreate user -- TODO remove
   return user
+
+type Event = User
+
+-- TODO Event with timestamp
+
+ack :: DB m => Event -> m ()
+ack usr = do
+  dbCreate usr
+  return () 
 
 type AppFoo m = forall a. (DB m, Log m) => m a
 
 type Run m = (DB m, Log m) => Command -> m [Event]
 type Ack m = (DB m, Log m) => Event -> m ()
 type Pub m = (DB m, Log m) => Event -> m [Command]
+
+-- TODO ? Is Pub an overkill? Couldn't one simply evaluate (pattern-match) the returned events manually?
+-- TODO Wouldn't sending a command to oneself be a hack anyway?
+
+type RunAck m = (DB m, Log m) => Command -> m ()
+
 
 -- TODO event-sourcing: Run with DbRead (of foldL [Event])
 -- TODO event-sourcing: Ack with DbWrite (of Event)
@@ -67,3 +82,14 @@ appSem = do
 
 
 type Command = String
+
+-- >>> :t print 42
+-- print 42 :: IO ()
+
+data Foo = Foo { foo :: String, bar :: Integer }
+
+myFoo :: Foo
+myFoo = Foo "Hello" 42
+
+-- >>> myFoo.foo
+-- Couldn't match expected type ‘String -> c’ with actual type ‘Foo’

@@ -4,7 +4,7 @@
 module Effects.B_Language.Spec where
 import Effects.B_Language.Mtl.Spec ( specMtl )
 import Effects.B_Language.Sem.Spec ( specSem )
-import Effects.B_Language ( app', appSem )
+import Effects.B_Language ( Event, app', appSem )
 import Effects.B_Domain
     ( Console(..),
       DB(dbRead, dbCreate),
@@ -12,7 +12,6 @@ import Effects.B_Domain
       ConsoleSem(..),
       DbSem(..),
       LogSem(..) )
-import Effects.A_Model ( Event )
 
 import Effects.Fixtures ( consoleMock, dbMock, expectedUser )
 
