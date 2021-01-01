@@ -1,6 +1,6 @@
 module Effects.C_Presentation where
 import Effects.C_Infrastructure ( interpretIO )
-import Effects.B_Language ( app', appSem, ack, fooUser )
+import Effects.B_Language ( app, app', appSem, ack, fooUser, fooCommand, Event )
 
 -- TODO JSON (PolysemyCleanArchitecture)
 
@@ -13,4 +13,8 @@ mainSem = interpretIO appSem >>= print
 main' :: IO ()
 main' = ack fooUser
 
--- >>> main'
+main'' :: IO Event
+main'' = app fooCommand -- >>= ack
+
+-- >>> main''
+-- out/db: openFile: resource busy (file is locked)

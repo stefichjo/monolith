@@ -84,7 +84,8 @@ appSem = do
 
 
 type Command = String
-
+fooCommand :: Command
+fooCommand = "Hello!"
 -- >>> :t print 42
 -- print 42 :: IO ()
 
