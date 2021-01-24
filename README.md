@@ -124,6 +124,20 @@ addition ∷ Num α ⇒ α → α → α
                 },
 ```
 
+## WAI - Web Application Interface
+
+* https://hackage.haskell.org/package/wai
+
+* `vim package.yaml`
+``` .yaml
+library:
+  source-dirs: src
+  dependencies:
+    - mtl
+    - polysemy
+```
+
+
 # Literature
 
 Tagles Final:
@@ -143,5 +157,16 @@ Polysemy is fun!:
 * https://haskell-explained.gitlab.io/blog/posts/2019/07/28/polysemy-is-cool-part-1/
 * https://haskell-explained.gitlab.io/blog/posts/2019/07/31/polysemy-is-cool-part-2/
 
-DDD-Architekturen im Vergleich
+DDD-Architekturen im Vergleich:
 * https://www.maibornwolff.de/blog/ddd-architekturen-im-vergleich
+
+Why WAI? = Your First Haskell Web App With WAI And Warp by Michael Snoyman
+* https://www.youtube.com/watch?v=mz5_HmLGRXc
+
+* Common packages:
+  * `wai`
+  * `warp`
+  * `wai-extra`
+  * `wai-conduit`
+  * `pipes-wai`
+  * `wai-websockets`
