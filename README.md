@@ -130,13 +130,11 @@ addition ∷ Num α ⇒ α → α → α
 
 * `vim package.yaml`
 ``` .yaml
-library:
-  source-dirs: src
-  dependencies:
-    - mtl
-    - polysemy
+dependencies:
+- wai
+- warp
+- http-types
 ```
-
 
 # Literature
 
