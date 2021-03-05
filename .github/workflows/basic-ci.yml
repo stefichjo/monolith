@@ -9,11 +9,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      #- name: Install stack
-      #  run: wget -qO- https://get.haskellstack.org/ | sh
+      - name: Upgrade Stack
+        run: stack upgrade --binary-only
         
       # Checks-out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v2
+      
+      - name: Cache
+        uses: actions/cache@v2.1.4
+        with:
+          path: .stack-work/
+          key: stack-monolith
         
       - name: Build project
-        run: stack build
+        run: stack build ./bin --test
+        
+      - uses: actions/download-artifact@v2
+        with:
+          name: monolith
+          path: ./bin
