@@ -27,4 +27,4 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: monolith
-          path: ~/.local/bin
+          path: /home/runner/.local/bin
