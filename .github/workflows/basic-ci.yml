@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install stack
-        run: wget -qO- https://get.haskellstack.org/ | sh
+      #- name: Install stack
+      #  run: wget -qO- https://get.haskellstack.org/ | sh
         
       # Checks-out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v2
