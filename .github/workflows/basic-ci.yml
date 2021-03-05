@@ -1,0 +1,19 @@
+name: Basic-CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install stack
+        run: wget -qO- https://get.haskellstack.org/ | sh
+        
+      # Checks-out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v2
+        
+      - name: Build project
+        run: stack build
